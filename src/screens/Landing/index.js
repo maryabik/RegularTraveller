@@ -30,7 +30,6 @@ const ColoredLine2 = ({ color }) => (
   return (
     <div class="content">
       <h1 style = {{fontSize: '25px', marginLeft: '17px', marginTop: '30px'}}>Saved Trips</h1>
-
       <ColoredLine2 color="black" />
       <button class = 'button1'  style= {{marginLeft: '60px', marginTop: '23px', backgroundColor: 'white', border : '1.5px solid black',
        padding: '10px 30px', transitionDuration: '0.4s', textAlign: 'center', fontSize: '13px'}} onClick={handleClick} >
@@ -40,6 +39,8 @@ const ColoredLine2 = ({ color }) => (
        padding: '10px 30px', transitionDuration: '0.4s', textAlign: 'center', fontSize: '13px'}} onClick={handleClick}>
         Template
       </button>
+
+      
 
       <p style= {{fontSize:'15px', color: 'rgb(37, 26, 194)', textAlign:'justify', marginLeft: '290px', marginTop: '12px'}}>Edit</p>
       
@@ -63,7 +64,7 @@ const ColoredLine2 = ({ color }) => (
         </p>
       </div>
 
-      <button class="button3" style= {{marginTop: '200px', marginLeft: '130px', backgroundColor: 'white', border : '2px solid black',
+      <button class="button3" style= {{marginTop: '100px', marginLeft: '130px', backgroundColor: 'white', border : '2px solid black',
        padding: '10px 35px', borderRadius: '12px', transitionDuration: '0.4s', textAlign: 'center', fontSize: '16px'}} 
        onClick={handleClick}>
         Plan a Trip Template

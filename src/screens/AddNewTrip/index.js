@@ -39,6 +39,7 @@ const ColoredLine = ({ color }) => (
 
       <ColoredLine2 color="black" />
       
+      
       <div style = {{marginTop: '30px'}}>
         <p style={{margin: '0in', lineHeight:'130%',fontSize:'17px', 
           color: 'black', textAlign:'justify', marginLeft: '50px', marginTop: '8px'}}>
