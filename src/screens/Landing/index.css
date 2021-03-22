@@ -1,0 +1,27 @@
+.button3 {
+    cursor: pointer;
+}
+
+.button3:hover {background-color: #3e8e41}
+
+.button3:active {
+  background-color: #3e8e41;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+
+.button1{
+    display: inline-block;
+
+}
+
+.button2{
+    display: inline-block;
+}
+
+.content{
+    margin-left: 10px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    margin-right: 10px;
+}
