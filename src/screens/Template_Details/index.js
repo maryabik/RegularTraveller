@@ -1,7 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import './index.css';
-import {IoIosSubway, IoIosCar, IoIosBus, IoIosAirplane} from 'react-icons/io';
+import {IoIosSubway, IoIosCar, IoIosBus, IoIosAirplane, IoMdBoat} from 'react-icons/io';
+import Popup from "reactjs-popup"
+import 'reactjs-popup/dist/index.css';
 
+
+const goToViewTrip = () => window.location.href = "/view-trip";
 
 function Template_Details() {
 // javascript code Here
@@ -31,16 +35,16 @@ function Template_Details() {
 
                 <div className = "line">
                     <label className = "blue-text">Departure</label>
-                    <button>Schedule</button>
+                    <button onClick = {goToViewTrip}>Schedule</button>
                 </div>
 
                 <div className = "line">
                     <label className = "blue-text">Arrival</label>
-                    <button>Schedule</button>
+                    <button onClick = {goToViewTrip}>Schedule</button>
                 </div>
             </div>
 
-            <div className = "line">
+            <div className = "line" onClick = {() => {window.location.href = "/edit-trip";}}>
                 <div className = "segment">
                     <IoIosCar/>
                     <div className = "segment-detail">
@@ -78,7 +82,18 @@ function Template_Details() {
                 <text>30 minutes</text>
             </div>
  
-            <button>Add to Trip</button>
+            {/* <button>Add to Trip</button> */}
+            <Popup trigger={<button>Add to Trip</button>} position="left center">
+                <div>
+                        
+                    <button><IoIosCar style = {{marginRight:"4px"}}/>Drive</button>
+                    <button><IoIosAirplane style = {{marginRight:"4px"}}/>Flight</button>
+                    <button><IoIosBus style = {{marginRight:"4px",}}/>Bus</button>
+                    <button><IoMdBoat style = {{marginRight:"4px",}}/>Ferry</button>
+
+
+                </div>
+            </Popup>
         </div>
     );
 }

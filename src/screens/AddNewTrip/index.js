@@ -86,7 +86,7 @@ const ColoredLine = ({ color }) => (
       </button>
       <button class="button button2" style= {{ marginLeft: '110px', backgroundColor: 'white', border : '2px solid black',
        padding: '10px 35px', borderRadius: '12px', transitionDuration: '0.4s', textAlign: 'center', fontSize: '16px'}} 
-       onClick={handleClick}>
+       onClick={()=>{window.location.href = "/template-details"}}>
         Save
       </button>
     
