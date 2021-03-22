@@ -10,44 +10,36 @@ function Edit_Trip() {
     return (
         <div className="wrapper">
             <h1>Edit Your Trip</h1>
-            <fieldset className="direction">
+            <label>
+                <p>From:</p>
+                <input className="from-to-input" name="from" value="UBC, Vancouver"/>
+            </label>
 
-                    <label className="from">
-                        <p className="from-to" >From:</p>
-                        <div>
-                        <input className="from-to-input" name="from" value="UBC, Vancouver"/>
-                        </div>
-                    </label>
+            <label>
+                <p>To:</p>
 
-                    <label className="to">
-                        <p className="from-to">To:</p>
-                        <div>
-                        <input className="from-to-input" name="to" value="YVR, Vancouver"/>
-                        </div>
-                    </label>
+                <input className="from-to-input" name="to" value="YVR, Vancouver"/>
+            </label>
 
-            </fieldset>
             <fieldset className="transport">
                 <h3 className="transport-selected"><IoIosSubway/></h3>
                 <h3 className="transport-icon"><IoIosCar/></h3>
                 <h3 className="transport-icon"><IoIosBus/></h3>
                 <h3 className="transport-icon"><IoIosAirplane/></h3>
-
             </fieldset>
-                <div>
-                    <h3 className="map"><GrMapLocation/></h3>
-                    <h2>Route 1</h2>
-                    <p>23 min (13km) - <span className="map-route">Via Airport Rd</span></p>
+            <div>
+                <h3 className="map"><GrMapLocation/></h3>
+                <h2>Route 1</h2>
+                <p>23 min (13km) - <span className="map-route">Via Airport Rd</span></p>
+            </div>
+            <hr className="thin"></hr>
+            <div>
+                <h3 className="map"><GrMapLocation/></h3>
+                <h2>Route 2</h2>
+                <p>24 min (13km) - <span className="map-route">Via Airport Rd</span></p>
+            </div>
 
-                </div>
-                <hr className="thin"></hr>
-                <div>
-                    <h3 className="map"><GrMapLocation/></h3>
-                    <h2>Route 2</h2>
-                    <p>24 min (13km) - <span className="map-route">Via Airport Rd</span></p>
-                </div>
-
-                <hr className="thin"></hr>
+            <hr className="thin"></hr>
 
             <button type="save">Save</button>
         </div>
