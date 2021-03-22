@@ -101,13 +101,8 @@ display: flex;
     border-left-color: white;
 }
 
-.map{
-    padding-top: 20px;
-    float: right;
-}
-
-.map-route {
-    color: dimgrey;
+.icon {
+    margin: 8px;
 }
 
 hr.thin {
