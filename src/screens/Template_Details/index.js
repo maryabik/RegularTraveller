@@ -1,8 +1,10 @@
-import React, {useEffect, useState} from 'react';
-import './index.css';
-import {IoIosSubway, IoIosCar, IoIosBus, IoIosAirplane, IoMdBoat} from 'react-icons/io';
+import React, {useEffect, useState} from "react";
+import "./index.css";
+import "./Segment";
+import {IoIosSubway, IoIosCar, IoIosBus, IoIosAirplane, IoMdBoat} from "react-icons/io";
 import Popup from "reactjs-popup"
-import 'reactjs-popup/dist/index.css';
+import "reactjs-popup/dist/index.css";
+import Segment from "./Segment";
 
 
 const goToViewTrip = () => window.location.href = "/view-trip";
@@ -44,45 +46,12 @@ function Template_Details() {
                 </div>
             </div>
 
-            <div className = "line" onClick = {() => {window.location.href = "/edit-trip";}}>
-                <div className = "segment">
-                    <IoIosCar/>
-                    <div className = "segment-detail">
-                        UBC - YVR <br/>
-                        <text className = "segment-transport">Drive</text> 
-                    </div>
-                </div>
-                <text>30 minutes</text>
-            </div>
+            <Segment discrption = "UBC - YVR" transport = "Drive" time = "30 minuts" icon = {<IoIosCar/>} onClick = {() => {window.location.href = "/edit-trip"}}></Segment>
 
-            <hr className="thin"></hr>
+            <Segment discrption = "YVR - YYZ" transport = "Flight" time = "3 hours" icon = {<IoIosAirplane/>}></Segment>
 
-            <div className = "line">
-                <div className = "segment">
-                    <IoIosAirplane/>
-                    <div className = "segment-detail">
-                        YVR - YYZ <br/>
-                        <text className = "segment-transport">Flight</text> 
-                    </div>
-                </div>
-                <text>3 hours</text>
-            </div>
+            <Segment discrption = "YYZ - Home" transport = "Bus" time = "30 minutes" icon = {<IoIosBus/>}></Segment>
 
-            <hr className="thin"></hr>
-
-            
-            <div className = "line">
-                <div className = "segment">
-                    <IoIosBus/>
-                    <div className = "segment-detail">
-                        YYZ - Home <br/>
-                        <text className = "segment-transport">Bus</text> 
-                    </div>
-                </div>
-                <text>30 minutes</text>
-            </div>
- 
-            {/* <button>Add to Trip</button> */}
             <Popup trigger={<button>Add to Trip</button>} position="left center">
                 <div>
                         
