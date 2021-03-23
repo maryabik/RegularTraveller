@@ -84,18 +84,14 @@ function View_trip() {
         </p>
       </div>
 
-      
-      <button class="button button1" style= {{marginTop: '40px', backgroundColor: 'white', border : '2px solid black',
-       padding: '10px 20px', borderRadius: '12px', transitionDuration: '0.4s', textAlign: 'center', fontSize: '16px'}} 
-       onClick={handleBack}>
-        Back
-      </button>
-      <button class="button button2" style= {{ marginLeft: '75px', backgroundColor: 'white', border : '2px solid black',
-       padding: '10px 10px', borderRadius: '12px', transitionDuration: '0.4s', textAlign: 'center', fontSize: '16px'}} 
-       onClick={handleBack}>
-        Add to trip
-      </button>
+      <div className="bottombar">
+      <button style= {{ marginLeft: '90px', marginTop: '40px',textAlign: 'center', fontSize: '16px'}} 
+        onClick={handleBack}>Add to trip</button>
 
+        <button  style= {{ marginLeft: '0px', marginTop: '40px',textAlign: 'center', fontSize: '16px'}}
+        onClick={handleBack}>Back</button>
+      </div>
+      
 
     </div>
   );
