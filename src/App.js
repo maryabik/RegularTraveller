@@ -1,19 +1,20 @@
-import logo from './logo.svg';
 import './App.css';
-
-import React from "react";
+import React, { useEffect } from "react";
 import { Router } from "react-router-dom";
 import Routes from './routes';
 import { createBrowserHistory } from "history";
+import { UserProvider } from './services/UserProvider.js';
 
 let history = createBrowserHistory();
 
 function App() {
 
   return (
-    <Router history={history}>
-      <Routes />
-    </Router>
+    <UserProvider>
+      <Router history={history}>
+        <Routes />
+      </Router>
+    </UserProvider>
   );
 }
 
