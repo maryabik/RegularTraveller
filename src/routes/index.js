@@ -10,6 +10,7 @@ import Edit_Trip from "../screens/Edit_Trip";
 import Template_Details from "../screens/Template_Details";
 import View_trip from "../screens/ViewTrip";
 import Add from "../screens/Add";
+import Duplicate from '../screens/Duplicate';
 
 function Routes() {
   const { user, setUser } = useContext(UserContext);
@@ -34,6 +35,7 @@ function Routes() {
         <Route path="/template-details" exact component={Template_Details} />
         <Route path="/view-trip" exact component={View_trip} />
         <Route path="/addnew" exact component={Add} />
+        <Route path='/duplicate' exact component={Duplicate}/>
       </Switch>
     );
   } else {

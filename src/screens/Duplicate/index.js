@@ -13,7 +13,7 @@ import moment from 'moment';
 
 
 
-class Add extends React.Component{
+class Duplicate extends React.Component{
 
   constructor(props){
     super(props);
@@ -75,7 +75,7 @@ class Add extends React.Component{
   //ToDO 
 
   }
-
+  
 
 render(){
   return (
@@ -84,31 +84,26 @@ render(){
         <p style={{marginLeft: "10px", color: "#3A72B4"}}>Cancel</p>
       </div>
       <div style ={{margin:'auto', textAlign: 'center'}} id="header">
-        <h1>New Trip</h1>
+        <h1>Duplicate Trip</h1>
       </div>
       <div id="add-container">
-        <p style={{marginLeft: "10px"}}><strong>Trip Name*</strong></p>
-        <div className="rectangleAdd">
+        <p style={{marginLeft: "10px"}}><strong>New Trip Name*</strong></p>
+        <div className="rectangleDup">
         <input type="text" placeholder="Enter trip name" onChange={this.update_trip_name} />
         </div>
-        <p style={{marginLeft: "10px"}}><strong>Start Location*</strong></p>
-        <div className="rectangleAdd">
-        <input type="text" placeholder="Enter start location" onChange={this.update_trip_start} />
-        </div>
-        <p style={{marginLeft: "10px"}}><strong>Destiantion Location*</strong></p>
-        <div className="rectangleAdd">
-        <input type="text" placeholder="Enter destination location" onChange={this.update_trip_destination} />
-        </div>
-        <p style={{marginLeft: "10px"}}><strong>Departure Date*</strong></p>
-        <div className="rectangleDept">
+        <p style={{marginLeft: "10px"}}><strong>Set New Departure Date*</strong></p>
+        <div className="rectangleDupDept">
         <DatePicker selected={this.state.date} onChange={this.handleChange}/>
         </div>
-        <Icon icon={calendarIcon} style={{fontSize: '30px'}} ></Icon>
-      </div>
+        <Icon icon={calendarIcon} style={{fontSize: '30px', display: "inlineBlock"}} ></Icon>
+        <p style={{marginLeft: "10px", clear: 'left'}}><strong>Options</strong></p>
+        
+        <label style={{marginLeft: '10px'}}><input type="radio" name="question-one" value="yes" style={{marginLeft: '10px', fontSize: '15px'}}/><strong>Reverse Trip</strong></label>
 
+      </div>
       <div>
-          <button className="saveButton" onClick={()=>{window.location.href = "/template-details"}}>Save</button>
-        </div>
+          <button className="saveButtonDup" onClick={()=>{window.location.href = "/template-details"}}>Save</button>
+        </div> 
       
     </div>
 
@@ -116,4 +111,4 @@ render(){
   }
 }
 
-export default Add;
+export default Duplicate;

@@ -30,8 +30,8 @@ function Home(){
          </div>
         <div className="rectangleContainer">
           <div className="icom1"> 
-          <Icon icon={outlineTrain} style={{color: '#989898', fontSize: '25px'}} />
-           <Icon icon={copy24Filled} style={{color: '#686868', fontSize: '35px'}} />
+          <Icon icon={outlineTrain} style={{color: '#989898', fontSize: '25px'}}  />
+           <Icon icon={copy24Filled} style={{color: '#686868', fontSize: '35px'}} onClick={()=>{window.location.href = "/duplicate"}} />
           </div>
     
         </div>

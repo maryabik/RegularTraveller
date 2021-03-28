@@ -1,0 +1,52 @@
+.rectangleDup{
+    width: 304px;
+    height: 36px;
+    margin-left: 20px;
+    margin-right: 20px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    margin-bottom: 15px;
+    border-radius: 12px;
+    background-color:#F6F5F5;
+    text-align: center;
+    align-items: center;
+    
+  }
+
+
+  .rectangleDupDept{
+    width: 216px;
+    height: 36px;
+    margin-left: 20px;
+    margin-right: 20px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    margin-bottom: 15px;
+    border-radius: 12px;
+    background-color:#F6F5F5;
+    float: left;
+    text-align: center;
+    align-items: center;
+    padding-top: 5px;
+
+  }
+
+  .saveButtonDup{
+    background-color: #3A72B4; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 20px;
+    border-radius: 12px;
+    width: 112px;
+    height: 57px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 30px;
+    margin-top: 200px;
+    margin-right: 130px;
+   
+  }
+
+  
