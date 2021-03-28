@@ -37,7 +37,7 @@ function Template_Details() {
 
                 <div className = "line">
                     <label className = "blue-text">Departure</label>
-                    <button onClick = {goToViewTrip}>Schedule</button>
+                    <button className onClick = {goToViewTrip}>Schedule</button>
                 </div>
 
                 <div className = "line">

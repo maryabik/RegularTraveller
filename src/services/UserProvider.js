@@ -22,7 +22,7 @@ export const UserProvider = ({ children }) => {
             console.log(res.user)
             const userID = res.user.uid;
             db.collection("users").doc(userID).set({ userID: userID, email: res.user.email })
-              .then(() => window.location.href = "./add");
+              .then(() => window.location.href = "./home");
           }).catch((error) => {
             console.log(error.message)
           })
