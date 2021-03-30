@@ -24,8 +24,11 @@ export const UserProvider = ({ children }) => {
 
   function insertTrip(userID, depart, tripName, start, end) {
     return new Promise((resolve, reject) => {
-      const tripID = uuidv4();
-      setTripIDs([tripID, ...tripIDs]);
+      var tripID = uuidv4();
+      var copy = tripIDs;
+      copy.push(tripID);
+      setTripIDs(copy);
+      console.log(tripIDs);
 
       const tripRef = db.collection("users").doc(userID).collection("trips").doc(tripID);
       tripRef.set({
@@ -49,29 +52,29 @@ export const UserProvider = ({ children }) => {
     return new Promise((resolve, reject) => {
       if (index == 0) { // Van to Victoria
         setTripSegment(userID, tripID, "drive", ["44 minutes", "Via Trans-Canada Hwy/BC-1 W"], "UBC",
-                      "Tsawwassen Ferry Terminal", "2:00 PM", "2:44 PM", "")
+                      "Tsawwassen Ferry Terminal", "2:00 PM", "2:44 PM", "", 1)
         .then(() => setTripSegment(userID, tripID, "ferry", "3:00 PM", "Tsawwassen Ferry Terminal",
-                      "Swartz Bay Ferry Terminal", "3:00 PM", "4:35 PM", ""))
+                      "Swartz Bay Ferry Terminal", "3:00 PM", "4:35 PM", "", 2))
         .then(() => setTripSegment(userID, tripID, "drive", ["37 minutes", "Via Patricia Bay Hwy"], "Swartz Bay Ferry Terminal",
-                      "Parliament House", "4:45 PM", "5:22 PM", ""))
+                      "Parliament House", "4:45 PM", "5:22 PM", "", 3))
         .then((response) => resolve(response))
         .catch((err) => reject(err));
       } else if (index == 1) { // Van to LA
         setTripSegment(userID, tripID, "drive", ["16 minutes", "Via SW Marine Drive"], "UBC",
-                      "YVR", "11:00 AM", "11:16 AM", "")
+                      "YVR", "11:00 AM", "11:16 AM", "", 1)
         .then(() => setTripSegment(userID, tripID, "flight", ["Air Canada", "554"], "YVR",
-                      "LAX", "1:45 PM", "4:28 PM", ""))
+                      "LAX", "1:45 PM", "4:28 PM", "", 2))
         .then(() => setTripSegment(userID, tripID, "drive", ["37 minutes", "Via I-105 E and I-110 N"], "LAX",
-                      "Los Angeles City Hall", "5:00 PM", "5:37 PM", ""))
+                      "Los Angeles City Hall", "5:00 PM", "5:37 PM", "", 3))
         .then((response) => resolve(response))
         .catch((err) => reject(err));
       } else { // Van to Brasilia
         setTripSegment(userID, tripID, "taxi", ["Yellow Cab", "604-681-1111"], "UBC",
-                      "YVR", "10:00 AM", "10:16 AM", "")
+                      "YVR", "10:00 AM", "10:16 AM", "", 1)
         .then(() => setTripSegment(userID, tripID, "flight-layover2", ["Air Canada", "118", "Air Canada", "90", "Air Canada", "9832"],
-                      "YVR", "BSB", "2:10 PM", "6:25 PM", ""))
+                      "YVR", "BSB", "2:10 PM", "6:25 PM", "", 2))
         .then(() => setTripSegment(userID, tripID, "taxi", ["Taxi Brasilia", "55 61 98126-5306"], "BSB",
-                      "Pier 21", "7:00 PM", "7:15 PM", ""))
+                      "Pier 21", "7:00 PM", "7:15 PM", "", 3))
         .then((response) => resolve(response))
         .catch((err) => reject(err));
       }
@@ -90,14 +93,14 @@ export const UserProvider = ({ children }) => {
   // flight: [Airline 1, Flight # 1, Airline 2, ...]
   //        -> flight-layover1 (1 layover), flight-layover2 (2 layovers)
   // taxi: String taxi company phone number
-  function setTripSegment(userID, tripID, type, details, start, end, depart, arrive, notes) {
+  function setTripSegment(userID, tripID, type, details, start, end, depart, arrive, notes, order) {
     return new Promise((resolve, reject) => {
       const segmentID = uuidv4();
       const segRef = db.collection("users").doc(userID).collection("trips").doc(tripID)
                        .collection("segments").doc(segmentID);
-      var content = {};
+
       if (type == "drive") {
-        content = {
+        segRef.set({
           type: type,
           distance: details[0],
           route: details[1],
@@ -106,10 +109,13 @@ export const UserProvider = ({ children }) => {
           departureTime: depart,
           arrivalTime: arrive,
           notes: "",
-          uid: segmentID
-        };
+          uid: segmentID,
+          sequenceNum: order
+        }).then((response) => resolve(response))
+          .catch((err) => reject(err));
+
       } else if (type == "ferry") {
-        content = {
+        segRef.set({
           type: type,
           sailing: details,
           startLocation: start,
@@ -117,10 +123,13 @@ export const UserProvider = ({ children }) => {
           departureTime: depart,
           arrivalTime: arrive,
           notes: "",
-          uid: segmentID
-        };
+          uid: segmentID,
+          sequenceNum: order
+        }).then((response) => resolve(response))
+          .catch((err) => reject(err));
+
       } else if (type == "flight") {
-        content = {
+        segRef.set({
           type: type,
           airline: details[0],
           flightNum: details[1],
@@ -129,10 +138,13 @@ export const UserProvider = ({ children }) => {
           departureTime: depart,
           arrivalTime: arrive,
           notes: "",
-          uid: segmentID
-        };
+          uid: segmentID,
+          sequenceNum: order
+        }).then((response) => resolve(response))
+          .catch((err) => reject(err));
+
       } else if (type == "flight-layover1") {
-        content = {
+        segRef.set({
           type: type,
           airline1: details[0],
           flightNum1: details[1],
@@ -143,10 +155,13 @@ export const UserProvider = ({ children }) => {
           departureTime: depart,
           arrivalTime: arrive,
           notes: "",
-          uid: segmentID
-        };
+          uid: segmentID,
+          sequenceNum: order
+        }).then((response) => resolve(response))
+          .catch((err) => reject(err));
+
       } else if (type == "flight-layover2") {
-        content = {
+        segRef.set({
           type: type,
           airline1: details[0],
           flightNum1: details[1],
@@ -159,10 +174,13 @@ export const UserProvider = ({ children }) => {
           departureTime: depart,
           arrivalTime: arrive,
           notes: "",
-          uid: segmentID
-        };
+          uid: segmentID,
+          sequenceNum: order
+        }).then((response) => resolve(response))
+          .catch((err) => reject(err));
+
       } else { // taxi
-        content = {
+        segRef.set({
           type: type,
           company: details[0],
           companyNum: details[1],
@@ -171,12 +189,12 @@ export const UserProvider = ({ children }) => {
           departureTime: depart,
           arrivalTime: arrive,
           notes: "",
-          uid: segmentID
-        };
-      }
+          uid: segmentID,
+          sequenceNum: order
+        }).then((response) => resolve(response))
+          .catch((err) => reject(err))
 
-      segRef.set(content).then((response) => resolve(response))
-        .catch((err) => reject(err))
+      }
     })
     .then((response) => {
       console.log("Created trip segment for tripID " + tripID);
@@ -196,22 +214,12 @@ export const UserProvider = ({ children }) => {
             console.log(res.user)
             const userID = res.user.uid;
             db.collection("users").doc(userID).set({ userID: userID, email: res.user.email })
-              .then(() => {
-                console.log("Inserting trips");
-                Promise.all([
-                  insertTrip(userID, "March 1, 2021", "Trip to Victoria", "Vancouver, BC", "Victoria, BC"),
-                  insertTrip(userID, "March 5, 2021", "Trip to LA", "Vancouver, BC", "Los Angeles, California"),
-                  insertTrip(userID, "March 10, 2021", "Trip to Brasilia", "Vancouver, BC", "Brasilia, Brazil")
-                ]);
-              })
-              .then(() => {
-                console.log("Inserting trip segments");
-                Promise.all([
-                  setTrip(userID, tripIDs[0], 0),
-                  setTrip(userID, tripIDs[1], 1),
-                  setTrip(userID, tripIDs[2], 2)
-                ]);
-              })
+              .then(() => insertTrip(userID, "March 1, 2021", "Trip to Victoria", "Vancouver, BC", "Victoria, BC"))
+              .then(() => insertTrip(userID, "March 5, 2021", "Trip to LA", "Vancouver, BC", "Los Angeles, California"))
+              .then(() => insertTrip(userID, "March 10, 2021", "Trip to Brasilia", "Vancouver, BC", "Brasilia, Brazil"))
+              .then(() => setTrip(userID, tripIDs[0], 0))
+              .then(() => setTrip(userID, tripIDs[1], 1))
+              .then(() => setTrip(userID, tripIDs[2], 2))
               .then(() => window.location.href = "./home");
           }).catch((error) => {
             console.log(error.message)
