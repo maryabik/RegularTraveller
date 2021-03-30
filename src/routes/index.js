@@ -11,6 +11,7 @@ import Template_Details from "../screens/Template_Details";
 import View_trip from "../screens/ViewTrip";
 import Add from "../screens/Add";
 import Duplicate from '../screens/Duplicate';
+import SegmentScreen from '../screens/ViewEditSegment';
 
 function Routes() {
   const { user, setUser } = useContext(UserContext);
@@ -36,6 +37,7 @@ function Routes() {
         <Route path="/view-trip" exact component={View_trip} />
         <Route path="/addnew" exact component={Add} />
         <Route path='/duplicate' exact component={Duplicate}/>
+        <Route path='/segment' exact component={SegmentScreen}/>
       </Switch>
     );
   } else {
