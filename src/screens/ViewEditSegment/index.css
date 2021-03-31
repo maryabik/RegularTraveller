@@ -3,11 +3,35 @@
   display: flex;
   align-items: center;
   height: 100vh;
-  padding-left: 8vw;
-  padding-right: 8vw
+  padding-left: 5vw;
+  padding-right: 5vw
+}
+
+.segmentTitleContainer {
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  display: flex;
+  align-self: flex-start;
+  width: inherit
 }
 
 .segmentScreenTitle {
   font-size: 40px;
   text-align: center;
+  margin-left: 30px
+}
+
+.segmentInputFields {
+  flex-direction: column;
+  display: flex;
+  align-items: center;
+  justify-content: center
+}
+
+.segmentInputRow {
+  flex-direction: row;
+  display: flex;
+  align-items: center;
+  justify-content: space-between
 }

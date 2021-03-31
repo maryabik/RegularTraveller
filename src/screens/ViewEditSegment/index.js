@@ -7,8 +7,13 @@ function SegmentScreen() {
   return(
     <div className="segmentScreenContent">
       <div className="segmentTitleContainer">
-        <ArrowBack />
+        <ArrowBack onClick={() => window.location.href = "./view-trip"}/>
         <h1 className="segmentScreenTitle">Trip Plan</h1>
+      </div>
+      <div className="segmentInputFields">
+        <div className="segmentInputRow">
+          <p><strong>From:</strong></p>
+        </div>
       </div>
     </div>
   );
