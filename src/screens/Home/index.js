@@ -12,6 +12,9 @@ import copy24Filled from '@iconify/icons-fluent/copy-24-filled';
 import outlineTrain from '@iconify/icons-ic/outline-train';
 import TorontoPic from '../../assets/TorontoPic.png';
 
+
+
+
 function Home(){
   const [trips, setTrips] = useState([]);
   const { logout } = useContext(UserContext);
@@ -38,6 +41,7 @@ function Home(){
     }, []);
   */
 
+
   return (
     <div className="homeContent">
       <h1 className="homeTitle">My Trips</h1>
@@ -54,10 +58,14 @@ function Home(){
           </div>
         </div>
       </div>
+
       <button className="buttonPlus"  onClick={() => window.location.href = "/addnew"}>+</button>
       <div className="signoutBtn" onClick={() => logout()}>LOG OUT</div>
+
+      
     </div>
   );
 }
+
 
 export default Home;
