@@ -1,0 +1,13 @@
+.segmentScreenContent {
+  flex-direction: column;
+  display: flex;
+  align-items: center;
+  height: 100vh;
+  padding-left: 8vw;
+  padding-right: 8vw
+}
+
+.segmentScreenTitle {
+  font-size: 40px;
+  text-align: center;
+}

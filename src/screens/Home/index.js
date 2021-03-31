@@ -41,8 +41,8 @@ function Home(){
   return (
     <div className="homeContent">
       <h1 className="homeTitle">My Trips</h1>
-      <div className="tripItem">
-        <img src={TorontoPic} />
+      <div className="tripItem" >
+        <img src={TorontoPic} onClick={()=>{window.location.href = "/view-trip"}}/>
         <div className="tripItemContent">
           <p className="tripItemTitle"><strong>Vancouver to Toronto</strong></p>
           <p className="tripItemTitle">Thursday, April 6 2021</p>
