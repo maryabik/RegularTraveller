@@ -13,7 +13,6 @@ export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [tripIDs, setTripIDs] = useState([]); // stores tripIDs
   const [tripMap, setTripMap] = useState({}); // map for tripID -> list of segmentIDs
-  const [segmentMap, setSegmentMap] = useState({}); // map for segmentID -> list of segment details
 
   function uuidv4() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -62,7 +61,7 @@ export const UserProvider = ({ children }) => {
       } else if (index == 1) { // Van to LA
         setTripSegment(userID, tripID, "drive", ["16 minutes", "Via SW Marine Drive"], "UBC",
                       "YVR", "11:00 AM", "11:16 AM", "", 1)
-        .then(() => setTripSegment(userID, tripID, "flight", ["Air Canada", "554"], "YVR",
+        .then(() => setTripSegment(userID, tripID, "flight", ["Air Canada", "AC554"], "YVR",
                       "LAX", "1:45 PM", "4:28 PM", "", 2))
         .then(() => setTripSegment(userID, tripID, "drive", ["37 minutes", "Via I-105 E and I-110 N"], "LAX",
                       "Los Angeles City Hall", "5:00 PM", "5:37 PM", "", 3))
@@ -71,7 +70,7 @@ export const UserProvider = ({ children }) => {
       } else { // Van to Brasilia
         setTripSegment(userID, tripID, "taxi", ["Yellow Cab", "604-681-1111"], "UBC",
                       "YVR", "10:00 AM", "10:16 AM", "", 1)
-        .then(() => setTripSegment(userID, tripID, "flight-layover2", ["Air Canada", "118", "Air Canada", "90", "Air Canada", "9832"],
+        .then(() => setTripSegment(userID, tripID, "flight-layover2", ["Air Canada", "AC118", "Air Canada", "AC90", "Air Canada", "AC9832"],
                       "YVR", "BSB", "2:10 PM", "6:25 PM", "", 2))
         .then(() => setTripSegment(userID, tripID, "taxi", ["Taxi Brasilia", "55 61 98126-5306"], "BSB",
                       "Pier 21", "7:00 PM", "7:15 PM", "", 3))
@@ -96,6 +95,20 @@ export const UserProvider = ({ children }) => {
   function setTripSegment(userID, tripID, type, details, start, end, depart, arrive, notes, order) {
     return new Promise((resolve, reject) => {
       const segmentID = uuidv4();
+      const segments = tripMap[tripID]; // [] of segmentIDs
+      if (segments != undefined) {
+        // a segment already exists in the trip
+        segments.push(segmentID);
+        setTripMap((prevMap) => {
+          return { tripID: segments, ...prevMap };
+        });
+      } else {
+        // a segment does not exist in the trip
+        setTripMap((prevMap) => {
+          return { tripID: [segmentID], ...prevMap };
+        });
+      }
+
       const segRef = db.collection("users").doc(userID).collection("trips").doc(tripID)
                        .collection("segments").doc(segmentID);
 
