@@ -13,7 +13,8 @@
   justify-content: flex-start;
   display: flex;
   align-self: flex-start;
-  width: inherit
+  width: inherit;
+  margin-left: -5px
 }
 
 .segmentScreenTitle {
@@ -26,12 +27,47 @@
   flex-direction: column;
   display: flex;
   align-items: center;
-  justify-content: center
+  justify-content: center;
+  width: 100%
 }
 
 .segmentInputRow {
   flex-direction: row;
   display: flex;
   align-items: center;
-  justify-content: space-between
+  justify-content: flex-start;
+  width: 100%;
+  margin-top: -10px
+}
+
+.segmentInputForm {
+  height: 25px;
+  width: 175px;
+  border-radius: 5px;
+  border-width: 1px;
+  border-color: #E5E5E5;
+}
+
+.segmentIconRow {
+  margin-top: 15px;
+  flex-direction: row;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  width: 100%
+}
+
+.segmentIconUnderline {
+  border: none;
+  height: 1px;
+  background-color: #989898;
+  width: 100%
+}
+
+.segmentContent {
+  flex-direction: column;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%
 }
