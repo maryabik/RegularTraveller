@@ -51,8 +51,8 @@ export const UserProvider = ({ children }) => {
     return new Promise((resolve, reject) => {
       if (index == 0) { // Van to Victoria
         setTripSegment(userID, tripID, "drive", ["44 minutes", "Via Trans-Canada Hwy/BC-1 W"], "UBC",
-                      "Tsawwassen Ferry Terminal", "2:00 PM", "2:44 PM", "", 1)
-        .then(() => setTripSegment(userID, tripID, "ferry", "3:00 PM", "Tsawwassen Ferry Terminal",
+                      "Horseshoe Bay Ferry Terminal", "2:00 PM", "2:44 PM", "", 1)
+        .then(() => setTripSegment(userID, tripID, "ferry", "3:00 PM", "Horseshoe Ferry Terminal",
                       "Swartz Bay Ferry Terminal", "3:00 PM", "4:35 PM", "", 2))
         .then(() => setTripSegment(userID, tripID, "drive", ["37 minutes", "Via Patricia Bay Hwy"], "Swartz Bay Ferry Terminal",
                       "Parliament House", "4:45 PM", "5:22 PM", "", 3))
@@ -114,11 +114,11 @@ export const UserProvider = ({ children }) => {
 
       if (type == "drive") {
         segRef.set({
-          type: type,
+          modeOfTransport: type,
           distance: details[0],
-          route: details[1],
-          startLocation: start,
-          endLocation: end,
+          mainStreetName: details[1],
+          startingLocation: start,
+          destinationLocation: end,
           departureTime: depart,
           arrivalTime: arrive,
           notes: "",
@@ -129,10 +129,10 @@ export const UserProvider = ({ children }) => {
 
       } else if (type == "ferry") {
         segRef.set({
-          type: type,
+          modeOfTransport: type,
           sailing: details,
-          startLocation: start,
-          endLocation: end,
+          startingLocation: start,
+          destinationLocation: end,
           departureTime: depart,
           arrivalTime: arrive,
           notes: "",
@@ -143,11 +143,11 @@ export const UserProvider = ({ children }) => {
 
       } else if (type == "flight") {
         segRef.set({
-          type: type,
+          modeOfTransport: type,
           airline: details[0],
           flightNum: details[1],
-          startLocation: start,
-          endLocation: end,
+          startingLocation: start,
+          destinationLocation: end,
           departureTime: depart,
           arrivalTime: arrive,
           notes: "",
@@ -158,13 +158,13 @@ export const UserProvider = ({ children }) => {
 
       } else if (type == "flight-layover1") {
         segRef.set({
-          type: type,
+          modeOfTransport: type,
           airline1: details[0],
           flightNum1: details[1],
           airline2: details[0],
           flightNum2: details[1],
-          startLocation: start,
-          endLocation: end,
+          startingLocation: start,
+          destinationLocation: end,
           departureTime: depart,
           arrivalTime: arrive,
           notes: "",
@@ -175,15 +175,15 @@ export const UserProvider = ({ children }) => {
 
       } else if (type == "flight-layover2") {
         segRef.set({
-          type: type,
+          modeOfTransport: type,
           airline1: details[0],
           flightNum1: details[1],
           airline2: details[2],
           flightNum2: details[3],
           airline3: details[4],
           flightNum3: details[5],
-          startLocation: start,
-          endLocation: end,
+          startingLocation: start,
+          destinationLocation: end,
           departureTime: depart,
           arrivalTime: arrive,
           notes: "",
@@ -194,11 +194,11 @@ export const UserProvider = ({ children }) => {
 
       } else { // taxi
         segRef.set({
-          type: type,
-          company: details[0],
-          companyNum: details[1],
-          startLocation: start,
-          endLocation: end,
+          modeOfTransport: type,
+          taxiCompany: details[0],
+          taxiCompanyPhoneNumber: details[1],
+          startingLocation: start,
+          destinationLocation: end,
           departureTime: depart,
           arrivalTime: arrive,
           notes: "",
