@@ -30,6 +30,7 @@ function SegmentScreen() {
     destinationLocation: "Los Angeles City Hall"
   }
 
+  let isMounted = false;
   const [start, setStart] = useState("");
   const [dest, setDest] = useState("");
   const [depart, setDepart] = useState("");
@@ -44,8 +45,9 @@ function SegmentScreen() {
   const [flightNum, setFlightNum] = useState("Flight Number");
 
   useEffect(() => {
-    const subscriber = loadData();
-    return () => subscriber();
+    isMounted = true;
+    loadData();
+    return () => { isMounted = false };
   }, []);
 
   function loadData() { // get all the data we need
@@ -94,6 +96,11 @@ function SegmentScreen() {
   function changeDest(event) {
     var target = event.target.value;
     setDest(target);
+  }
+
+  function changeDepart(event) {
+    var target = event.target.value;
+    setDepart(target);
   }
 
   function selectTransport(index, start, dest) {
@@ -212,17 +219,32 @@ function SegmentScreen() {
   }
 
   function saveSegment() {
-    const doc = db.collection('users').doc(tripData.tripID)
-                  .collection('segments').doc(tripData.segmentID);
+    const segID = Math.random().toString();
+    const segDoc = db.collection('users').doc(userID).collection('trips')
+                     .doc(tripData.tripID).collection('segments').doc(segID);
 
     if (start == "" || dest == "" || depart == "") {
       alert("Please fill in depature time, start location and destination location.");
     }
 
     if (icons[0]) { // flight
-        doc.set({
-
+      if (airline == "Airline" || flightNum == "Flight Number") {
+        alert("Please fill in airline and flight number");
+      } else {
+        segDoc.set({
+          airline: airline,
+          departureTime: depart,
+          startingLocation: start,
+          destinationLocation: dest,
+          modeOfTransport: "flight",
+          uid: segID,
+          customNotes: "",
+          sequenceNum: tripSegments.length + 1
+        }).then(() => {
+          history.push("/view-trip");
+          window.location.href = "./view-trip";
         });
+      }
     } else if (icons[1]) { // transit
 
     } else if (icons[2]) { // taxi
@@ -237,7 +259,10 @@ function SegmentScreen() {
   return(
     <div className="segmentScreenContent">
       <div className="segmentTitleContainer">
-        <ArrowBack onClick={() => window.location.href = "./view-trip"}/>
+        <ArrowBack onClick={() => {
+          history.push("/view-trip");
+          window.location.href = "./view-trip"; }}
+        />
         <h1 className="segmentScreenTitle">Trip Plan</h1>
       </div>
       <div className="segmentInputFields">
@@ -270,7 +295,7 @@ function SegmentScreen() {
                    placeholder="Departure Time"
                    id="departTime"
                    className="segmentInputForm"
-                   onChange={changeDest}
+                   onChange={changeDepart}
             />
           </form>
         </div>
