@@ -21,16 +21,24 @@ import Popup from "reactjs-popup"
 
 
 function Home(){
-  const [trips, setTrips] = useState([]);
-  const { logout } = useContext(UserContext);
-  const user = firebase.auth().currentUser.uid;
-  const db = firebase.firestore();
 
-  // pull trips from db (might have to fix syntax)
-  /*
-    useEffect(() => {
-      const subscriber = db.collection('users')
-        .doc(user)
+  const { logout } = useContext(UserContext);
+ 
+
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  const googleProvider = new firebase.auth.GoogleAuthProvider();
+
+  const[prevTrips, setTrips] = useState([]);
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  
+    function loadData() {
+      db.collection('users')
+        .doc(userID)
         .collection('trips')
         .get()
         .then((querySnapshot) => {
@@ -42,12 +50,113 @@ function Home(){
             console.log(doc.id, " => ", doc.data());
           });
         });
-      return () => subscriber();
-    }, []);
-  */
+    }
+  
+    //const [user, setUser] = useState(null);
+    const [tripIDs, setTripIDs] = useState([]); // stores tripIDs
+    //const [tripMap, setTripMap] = useState({}); // map for tripID -> list of segmentIDs
+
+    function displayPastTrips() {
+
+      return(
+        <ul className="TripHistory">
+        {(prevTrips != undefined && prevTrips.length > 0) ?
+          prevTrips.map((res) =>
+          <div className="tripItem" >
+            <div className="tripItemContent">
+            <div className="PastTrip" onClick={() => {window.location.href = "/view-trip"}}>
+              <p className="tripItemTitle"><strong>{res.tripName}</strong></p>
+                <p className="tripItemTitle">{res.departureDate}</p>
+                <div className="tripItemIconRow">
+                  <div className="icom1">
+                    <Icon icon={outlineTrain} style={{color: '#989898', fontSize: '25px'}}  />
+                    <Popup trigger={<Icon icon={copy24Filled} style={{color: '#686868', fontSize: '35px'}}/>} modal>
+                      {close => (
+                        <div className="modal">
+                          <div id="cancel"onClick={close}>
+                            <p style={{marginLeft: "10px", color: "#3A72B4"}}>Cancel</p>
+                          </div>
+                          <div style ={{margin:'auto', textAlign: 'center'}} id="header">
+                            <h1>Duplicate Trip</h1>
+                          </div>
+                          <div id="add-container">
+                            <p style={{marginLeft: "10px"}}><strong>New Trip Name*</strong></p>
+                            <form onSubmit={e => { e.preventDefault(); }}>
+                              <input type="text"
+                                    placeholder="Enter trip name"
+                                    id="tripName"
+                                    className="AddTripForm"
+                                    onChange={changeName}
+                              />
+                            </form>
+                            <p style={{marginLeft: "10px"}}><strong>Set New Departure Date*</strong></p>
+                            <form onSubmit={e => { e.preventDefault(); }}>
+                              <input type="Date"     
+                                    id="Date"
+                                    className="AddTripForm"
+                                    onChange={changeDate}
+                              />
+                            </form>
+                            {setStart(res.start),
+                            setDest(res.dest)}
+                          </div>
+                          <div>
+                          <button className="saveButtonAdd" onClick={()=>{
+                            window.location.href = "/home";
+                            insertTrip(userID, date, name, start, dest)    
+                            }}>Save</button>
+                          </div> 
+                        </div>
+                      )}  
+                    </Popup>
+                </div>
+              </div>
+            </div>
+            </div>
+          </div>
+            )
+          : <p>No previous trips found</p>}
+        </ul>   
+        
+      )
+    }
+
+    function uuidv4() {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+    }
+  
+    function insertTrip(userID, depart, tripName, start, end) {
+      return new Promise((resolve, reject) => {
+        var tripID = uuidv4();
+        var copy = tripIDs;
+        copy.push(tripID);
+        setTripIDs(copy);
+        console.log(tripIDs);
+  
+        const tripRef = db.collection("users").doc(userID).collection("trips").doc(tripID);
+        tripRef.set({
+          departureDate: depart,
+          arrivalDate: "",
+          tripName: tripName,
+          startLocation: start,
+          endLocation: end,
+          uid: tripID
+        }).then((response) => resolve(response))
+        .catch((err) => reject(err));
+      }).then((response) => {
+        return true;
+      }, (err) => {
+        return false;
+      });
+    }
 
     const location = useLocation();
     let history = useHistory();
+    const userID = firebase.auth().currentUser.uid;
+
   
     const [name, setName] = useState("");
     const [start, setStart] = useState("");
@@ -82,21 +191,8 @@ function Home(){
   return (
     <div className="homeContent">
       <h1 className="homeTitle">My Trips</h1>
-      <div className="tripItem" >
-        <img src={TorontoPic} onClick={()=>{window.location.href = "/view-trip"}}/>
-        <div className="tripItemContent">
-          <p className="tripItemTitle"><strong>Vancouver to Toronto</strong></p>
-          <p className="tripItemTitle">Thursday, April 6 2021</p>
-          <div className="tripItemIconRow">
-            <div className="icom1">
-              <Icon icon={outlineTrain} style={{color: '#989898', fontSize: '25px'}}  />
-              <Icon icon={copy24Filled} style={{color: '#686868', fontSize: '35px'}} onClick={()=>{window.location.href = "/duplicate"}} />
-            </div>
-          </div>
-        </div>
-      </div>
-
-<div className= "modalWrapper">
+        {displayPastTrips()}
+    <div className= "modalWrapper">
       <Popup trigger={<button className="buttonPlus">+</button>} modal>
         {close => (
             <div className="modal">
@@ -111,7 +207,7 @@ function Home(){
                   <form onSubmit={e => { e.preventDefault(); }}>
                     <input type="text"
                           placeholder="Enter trip name"
-                          id="startLocation"
+                          id="tripName"
                           className="AddTripForm"
                           onChange={changeName}
                     />
@@ -129,7 +225,7 @@ function Home(){
                 <form onSubmit={e => { e.preventDefault(); }}>
                     <input type="text"
                           placeholder="Enter destination location"
-                          id="startLocation"
+                          id="DestLocation"
                           className="AddTripForm"
                           onChange={changeDest}
                     />
@@ -137,14 +233,17 @@ function Home(){
                 <p><strong>Departure Date*</strong></p>
                 <form onSubmit={e => { e.preventDefault(); }}>
                     <input type="Date"     
-                          id="startLocation"
+                          id="Date"
                           className="AddTripForm"
                           onChange={changeDate}
                     />
                   </form>
               </div>
               <div>
-                  <button className="saveButtonAdd" onClick={()=>{window.location.href = "/view-trip"}}>Save</button>
+                  <button className="saveButtonAdd" onClick={()=>{
+                    window.location.href = "/view-trip";
+                    insertTrip(userID, date, name, start, dest)                                                           
+                    }}>Save</button>
                 </div>  
           </div>           
            )}

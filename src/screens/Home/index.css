@@ -70,7 +70,7 @@ display: flex;
 justify-content: center;
 align-items: center;
 
-margin-top: 250px;
+margin-top: 10px;
 margin-left: 20px;
 margin-right: 40px;
 padding-left: 30px;
@@ -101,8 +101,10 @@ padding-right: 30px;
   display: flex;
   justify-content: center;
   align-items: center;
+  
  
 }
+
 
 
 .modalWrapper{
