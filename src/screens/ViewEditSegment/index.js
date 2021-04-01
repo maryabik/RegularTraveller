@@ -35,7 +35,7 @@ function SegmentScreen() {
   const [dest, setDest] = useState("");
   const [depart, setDepart] = useState("");
   const [icons, setIcons] = useState([false, false, false, false, false]);
-  const [allSegments, setAllSegments] = useState([]); // routeData
+  const [dataSegments, setDataSegments] = useState([]); // routeData
   const [userSegments, setUserSegments] = useState([]); // all the user's segments
   const [tripSegments, setTripSegments] = useState([]); // all the segments in this trip
   const [thisSegment, setThisSegment] = useState({}); // this current segment
@@ -43,6 +43,9 @@ function SegmentScreen() {
   // flight states
   const [airline, setAirline] = useState("Airline");
   const [flightNum, setFlightNum] = useState("Flight Number");
+
+  // ferry state
+  const [ferryTime, setFerryTime] = useState("Sailing Time");
 
   useEffect(() => {
     isMounted = true;
@@ -56,7 +59,7 @@ function SegmentScreen() {
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
           // doc.data() is never undefined for query doc snapshots
-          setAllSegments((prevSegments) => {
+          setDataSegments((prevSegments) => {
             return [doc.data(), ...prevSegments]; // populate trips array with the user's trips
           });
           //console.log(doc.id, " => ", doc.data());
@@ -130,8 +133,7 @@ function SegmentScreen() {
     // display that history as a list
     // layovers should be inputted as individual flights
     var prevFlights = userSegments.filter((item) => item.modeOfTransport == "flight" &&
-                                                    item.startingLocation == start &&
-                                                    item.destinationLocation == dest);
+                       item.startingLocation == start && item.destinationLocation == dest);
 
     return (
       <div className="flightSegmentContent">
@@ -187,8 +189,14 @@ function SegmentScreen() {
   }
 
   function displayTransitInfo(index, start, dest) {
+    var routeData = dataSegments.filter((item) => item.modeOfTransport == "transit" &&
+                     item.startingLocation == start && item.destinationLocation == dest);
+    var prevTransits = userSegments.filter((item) => item.modeOfTransport == "transit" &&
+                     item.startingLocation == start && item.destinationLocation == dest);
+
+
     return (
-      <div>
+      <div className="transitSegmentContent">
         Transit
       </div>
     );
@@ -211,9 +219,38 @@ function SegmentScreen() {
   }
 
   function displayFerryInfo(index, start, dest) {
+    var prevFerries = userSegments.filter((item) => item.modeOfTransport == "ferry" &&
+                     item.startingLocation == start && item.destinationLocation == dest);
+
     return (
-      <div>
-        Ferry
+      <div className="flightSegmentContent">
+        <div className="flightSegmentInputRow">
+          <p style={{marginRight: 15}}>Sailing Time:</p>
+          <form onSubmit={e => { e.preventDefault(); }}>
+            <input type="text"
+                   placeholder={ferryTime}
+                   id="ferryInput"
+                   className="segmentInputForm"
+                   onChange={(event) => {
+                     setFerryTime(event.target.value);
+                   }}
+            />
+          </form>
+        </div>
+        <p><strong>Your Ferry History</strong></p>
+        <ul className="segmentFlightHistory">
+        {(prevFerries != undefined && prevFerries.length > 0) ?
+          prevFerries.map((res) =>
+            <div className="segmentFlightElement"
+                 onClick={() => {
+                   setFerryTime(res.sailingTime);
+                   document.getElementById("ferryInput").value = ferryTime;
+                 }}>
+              <p style={{marginRight: 4}}>{res.sailingTime}</p>
+              <p>Sailing</p>
+            </div>)
+          : <p>No previously taken ferries found</p>}
+        </ul>
       </div>
     );
   }
@@ -251,8 +288,26 @@ function SegmentScreen() {
 
     } else if (icons[3]) { // drive
 
-    } else { // ferry
-
+    } else if (icons[4]) { // ferry
+      if (ferryTime == "Sailing Time") {
+        alert("Please fill in a sailing time");
+      } else {
+        segDoc.set({
+          sailingTime: ferryTime,
+          departureTime: depart,
+          startingLocation: start,
+          destinationLocation: dest,
+          modeOfTransport: "ferry",
+          uid: segID,
+          customNotes: "",
+          sequenceNum: tripSegments.length + 1
+        }).then(() => {
+          history.push("/view-trip");
+          window.location.href = "./view-trip";
+        });
+      }
+    } else {
+      alert("Select a mode of transportation to continue.");
     }
   }
 

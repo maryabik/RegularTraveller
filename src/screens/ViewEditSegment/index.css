@@ -124,3 +124,11 @@
   align-self: flex-start;
   width: 100%;
 }
+
+.transitSegmentContent {
+  flex-direction: column;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+}
