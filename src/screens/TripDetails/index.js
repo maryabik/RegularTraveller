@@ -48,7 +48,13 @@ class TripDetail extends React.Component {
     }
 
     async fetchTripInfo () {
-        const segCollection = await this.db.collection("users").doc(this.user).collection("trips").doc(this.tripUID).collection("segments").get();
+        const segCollection = await this.db
+            .collection("users")
+            .doc(this.user)
+            .collection("trips")
+            .doc(this.tripUID)
+            .collection("segments")
+            .get();
         
         segCollection.forEach((doc) => {
             this.segDesctrptions.push(doc.data().startLocation + " - " + doc.data().endLocation);
@@ -57,7 +63,11 @@ class TripDetail extends React.Component {
             this.segUID.push(doc.id)
         });
 
-        const tripRef = this.db.collection("users").doc(this.user).collection("trips").doc(this.tripUID);
+        const tripRef = this.db
+            .collection("users")
+            .doc(this.user)
+            .collection("trips")
+            .doc(this.tripUID);
 
         const tripDoc = await tripRef.get();
 
@@ -65,6 +75,20 @@ class TripDetail extends React.Component {
         this.setState({trip_start: tripDoc.data().startLocation});
         this.setState({trip_destination: tripDoc.data().endLocation});
         // this.setState({departure_date: tripDoc.data().departureDate});   
+    }
+
+    saveTripInfo() {
+        const tripRef = this.db
+            .collection("users")
+            .doc(this.user)
+            .collection("trips")
+            .doc(this.tripUID);
+
+        tripRef.set({
+            // depatureDate: this.state.departure_date,
+            startLocation: this.state.trip_start,
+            endLocation: this.state.trip_destination
+        });
     }
         
 
@@ -97,23 +121,11 @@ class TripDetail extends React.Component {
                 <p style = {{marginTop: "40px"}}/>
 
                 {this.segDesctrptions.map((item, index) => {
-                    return (<Segment discrption = {item} transport = {this.segTransport[index]} time = {this.segTime[index]} icon = {iconMapping.get("Drive")} onClick = {() => {window.location.href = "/edit-trip"}}></Segment>);
+                    return (<Segment discrption = {item} transport = {this.segTransport[index]} time = {this.segTime[index]} icon = {iconMapping.get("Drive")} onClick = {() => {window.location.href = "/segment"}}></Segment>);
                 })}
 
-                {/* <Popup trigger={<button>Add to Trip</button>} position="left center">
-                    <div>
-                            
-                        <button><IoIosCar style = {{marginRight:"4px"}}/>Drive</button>
-                        <button><IoIosAirplane style = {{marginRight:"4px"}}/>Flight</button>
-                        <button><IoIosBus style = {{marginRight:"4px",}}/>Bus</button>
-                        <button><IoMdBoat style = {{marginRight:"4px",}}/>Ferry</button>
-
-
-                    </div>
-                </Popup> */}
-
-                <Fab color="primary" aria-label="add">
-                    <AddIcon />
+                <Fab color="primary" aria-label="add" >
+                    <AddIcon/>
                 </Fab>
             </div>
         );
