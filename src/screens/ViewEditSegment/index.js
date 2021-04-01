@@ -44,6 +44,9 @@ function SegmentScreen() {
   const [airline, setAirline] = useState("Airline");
   const [flightNum, setFlightNum] = useState("Flight Number");
 
+  // transit states
+  const [transitRoute, setTransitRoute] = useState({});
+
   // ferry state
   const [ferryTime, setFerryTime] = useState("Sailing Time");
 
@@ -128,7 +131,7 @@ function SegmentScreen() {
 
   }
 
-  function displayFlightInfo(index, start, dest) {
+  function displayFlightInfo(start, dest) {
     // depending on start and dest, search for flights that user has previously taken
     // display that history as a list
     // layovers should be inputted as individual flights
@@ -188,21 +191,45 @@ function SegmentScreen() {
     );
   }
 
-  function displayTransitInfo(index, start, dest) {
+  function displayTransitInfo(start, dest) {
     var routeData = dataSegments.filter((item) => item.modeOfTransport == "transit" &&
                      item.startingLocation == start && item.destinationLocation == dest);
     var prevTransits = userSegments.filter((item) => item.modeOfTransport == "transit" &&
                      item.startingLocation == start && item.destinationLocation == dest);
 
+    var combinedData = [...prevTransits];
+    routeData.forEach((item) => {
+      var hasDuplicate = prevTransits.reduce((acc, route) => (acc || route.busNumber == item.busNumber), false);
+      console.log(hasDuplicate);
+      if (!hasDuplicate) {
+        combinedData = [...prevTransits, item];
+      }
+    });
+
+    function selectTransitItem(item) {
+      const index = combinedData.indexOf(item);
+    }
 
     return (
       <div className="transitSegmentContent">
-        Transit
+        <ul className="segmentFlightHistory">
+        {(combinedData != undefined && combinedData.length > 0) ?
+          combinedData.map((res) =>
+            <div className="segmentTransitElement"
+                 onClick={() => selectTransitItem(res)}>
+              <p style={{marginTop: 1, marginBottom: 4}}>{res.startingStop} to {res.destinationStop}</p>
+              <p style={{marginTop: 1, marginBottom: 1}}>Bus {res.busNumber}</p>
+              {prevTransits.includes(res) ?
+                <p style={{marginTop: 1, marginBottom: 1}}>You've taken this route before</p> : <p />}
+              <hr className="transitSegmentSeparator" />
+            </div>)
+          : <p>No transit routes found</p>}
+        </ul>
       </div>
     );
   }
 
-  function displayTaxiInfo(index, start, dest) {
+  function displayTaxiInfo(start, dest) {
     return (
       <div>
         Taxi
@@ -210,7 +237,7 @@ function SegmentScreen() {
     );
   }
 
-  function displayDriveInfo(index, start, dest) {
+  function displayDriveInfo(start, dest) {
     return (
       <div>
         Drive
@@ -218,7 +245,7 @@ function SegmentScreen() {
     );
   }
 
-  function displayFerryInfo(index, start, dest) {
+  function displayFerryInfo(start, dest) {
     var prevFerries = userSegments.filter((item) => item.modeOfTransport == "ferry" &&
                      item.startingLocation == start && item.destinationLocation == dest);
 
@@ -364,10 +391,11 @@ function SegmentScreen() {
         <hr className="segmentIconUnderline"/>
         <div className="segmentContent">
           {/* Replaceable Content Goes Here */
-            icons[0] ? displayFlightInfo(0, start, dest) :
-            icons[1] ? displayTransitInfo(1, start, dest) :
-            icons[2] ? displayTaxiInfo(2, start, dest) :
-            icons[3] ? displayDriveInfo(3, start, dest) : displayFerryInfo(4, start, dest)
+            icons[0] ? displayFlightInfo(start, dest) :
+            icons[1] ? displayTransitInfo(start, dest) :
+            icons[2] ? displayTaxiInfo(start, dest) :
+            icons[3] ? displayDriveInfo(start, dest) :
+            icons[4] ? displayFerryInfo(start, dest) : <p>Select a Mode of Transportation</p>
           }
         </div>
         <div className="segmentSaveButton"
