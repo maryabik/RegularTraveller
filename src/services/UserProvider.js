@@ -50,20 +50,20 @@ export const UserProvider = ({ children }) => {
   function setTrip(userID, tripID, index) {
     return new Promise((resolve, reject) => {
       if (index == 0) { // Van to Victoria
-        setTripSegment(userID, tripID, "drive", ["44 minutes", "Via Trans-Canada Hwy/BC-1 W"], "UBC",
+        setTripSegment(userID, tripID, "drive", ["31.9 km", "Via Trans-Canada Hwy/BC-1 W"], "UBC",
                       "Horseshoe Bay Ferry Terminal", "2:00 PM", "2:44 PM", "", 1)
         .then(() => setTripSegment(userID, tripID, "ferry", "3:00 PM", "Horseshoe Ferry Terminal",
                       "Swartz Bay Ferry Terminal", "3:00 PM", "4:35 PM", "", 2))
-        .then(() => setTripSegment(userID, tripID, "drive", ["37 minutes", "Via Patricia Bay Hwy"], "Swartz Bay Ferry Terminal",
+        .then(() => setTripSegment(userID, tripID, "drive", ["32.6 km", "Via Patricia Bay Hwy"], "Swartz Bay Ferry Terminal",
                       "Parliament House", "4:45 PM", "5:22 PM", "", 3))
         .then((response) => resolve(response))
         .catch((err) => reject(err));
       } else if (index == 1) { // Van to LA
-        setTripSegment(userID, tripID, "drive", ["16 minutes", "Via SW Marine Drive"], "UBC",
+        setTripSegment(userID, tripID, "drive", ["13.2 km", "Via SW Marine Drive"], "UBC",
                       "YVR", "11:00 AM", "11:16 AM", "", 1)
         .then(() => setTripSegment(userID, tripID, "flight", ["Air Canada", "AC554"], "YVR",
                       "LAX", "1:45 PM", "4:28 PM", "", 2))
-        .then(() => setTripSegment(userID, tripID, "drive", ["37 minutes", "Via I-105 E and I-110 N"], "LAX",
+        .then(() => setTripSegment(userID, tripID, "drive", ["18.9 miles", "Via I-105 E and I-110 N"], "LAX",
                       "Los Angeles City Hall", "5:00 PM", "5:37 PM", "", 3))
         .then((response) => resolve(response))
         .catch((err) => reject(err));

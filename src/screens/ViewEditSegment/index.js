@@ -24,7 +24,7 @@ function SegmentScreen() {
   const userID = firebase.auth().currentUser.uid;
   const db = firebase.firestore();
   const tripData = {
-    tripID: "2aea483d-765e-432e-9abc-02711198d968",
+    tripID: "3ee66c5d-9b5b-4afd-b648-c3d653794853",
     segmentID: "7f91aed8-a154-4d2c-b871-2caf60d3e8b7",
     startingLocation: "LAX",
     destinationLocation: "Los Angeles City Hall"
@@ -46,6 +46,12 @@ function SegmentScreen() {
 
   // transit states
   const [transitRoute, setTransitRoute] = useState({});
+
+  // taxi states
+  const [taxi, setTaxi] = useState({});
+
+  // drive states
+  const [driveRoute, setDriveRoute] = useState({});
 
   // ferry state
   const [ferryTime, setFerryTime] = useState("Sailing Time");
@@ -206,21 +212,21 @@ function SegmentScreen() {
       }
     });
 
-    function selectTransitItem(item) {
-      const index = combinedData.indexOf(item);
-    }
-
     return (
       <div className="transitSegmentContent">
         <ul className="segmentFlightHistory">
         {(combinedData != undefined && combinedData.length > 0) ?
           combinedData.map((res) =>
             <div className="segmentTransitElement"
-                 onClick={() => selectTransitItem(res)}>
-              <p style={{marginTop: 1, marginBottom: 4}}>{res.startingStop} to {res.destinationStop}</p>
+                 onClick={() => setTransitRoute(res)}>
+              {res == transitRoute ?
+                <p style={{marginTop: 1, marginBottom: 4}}><strong>{res.startingStop} to {res.destinationStop}</strong></p>
+                :
+                <p style={{marginTop: 1, marginBottom: 4}}>{res.startingStop} to {res.destinationStop}</p>
+              }
               <p style={{marginTop: 1, marginBottom: 1}}>Bus {res.busNumber}</p>
               {prevTransits.includes(res) ?
-                <p style={{marginTop: 1, marginBottom: 1}}>You've taken this route before</p> : <p />}
+                <p style={{marginTop: 2, marginBottom: 1}}><i>You've taken this route before</i></p> : <p />}
               <hr className="transitSegmentSeparator" />
             </div>)
           : <p>No transit routes found</p>}
@@ -230,17 +236,93 @@ function SegmentScreen() {
   }
 
   function displayTaxiInfo(start, dest) {
+    var routeData = dataSegments.filter((item) => item.modeOfTransport == "taxi" &&
+                     item.startingLocation == start && item.destinationLocation == dest);
+    var prevTaxis = userSegments.filter((item) => item.modeOfTransport == "taxi" &&
+                     item.startingLocation == start && item.destinationLocation == dest);
+    var combinedData = [];
+
+    prevTaxis.forEach((item) => {
+      var hasDuplicate = combinedData.reduce((acc, route) => (acc || route.taxiCompany == item.taxiCompany), false);
+      console.log(hasDuplicate);
+      if (!hasDuplicate) {
+        combinedData.push(item);
+      }
+    });
+
+    routeData.forEach((item) => {
+      var hasDuplicate = combinedData.reduce((acc, route) => (acc || route.taxiCompany == item.taxiCompany), false);
+      console.log(hasDuplicate);
+      if (!hasDuplicate) {
+        combinedData.push(item);
+      }
+    });
+
     return (
-      <div>
-        Taxi
+      <div className="transitSegmentContent">
+        <ul className="segmentFlightHistory">
+        {(combinedData != undefined && combinedData.length > 0) ?
+          combinedData.map((res) =>
+            <div className="segmentTransitElement"
+                 onClick={() => setTaxi(res)}>
+              {res == taxi ?
+                <p style={{marginTop: 1, marginBottom: 4}}><strong>{res.taxiCompany}</strong></p>
+                :
+                <p style={{marginTop: 1, marginBottom: 4}}>{res.taxiCompany}</p>
+              }
+              <p style={{marginTop: 1, marginBottom: 1}}>Phone Number: {res.taxiCompanyPhoneNumber}</p>
+              {prevTaxis.includes(res) ?
+                <p style={{marginTop: 1, marginBottom: 1}}><i>You've taken this taxi before</i></p> : <p />}
+              <hr className="driveSegmentSeparator" />
+            </div>)
+          : <p>No taxi options found</p>}
+        </ul>
       </div>
     );
   }
 
   function displayDriveInfo(start, dest) {
+    var routeData = dataSegments.filter((item) => item.modeOfTransport == "drive" &&
+                     item.startingLocation == start && item.destinationLocation == dest);
+    var prevDrives = userSegments.filter((item) => item.modeOfTransport == "drive" &&
+                     item.startingLocation == start && item.destinationLocation == dest);
+    var combinedData = [];
+
+    prevDrives.forEach((item) => {
+      var hasDuplicate = combinedData.reduce((acc, route) => (acc || route.mainStreetName == item.mainStreetName), false);
+      console.log(hasDuplicate);
+      if (!hasDuplicate) {
+        combinedData.push(item);
+      }
+    });
+
+    routeData.forEach((item) => {
+      var hasDuplicate = combinedData.reduce((acc, route) => (acc || route.mainStreetName == item.mainStreetName), false);
+      console.log(hasDuplicate);
+      if (!hasDuplicate) {
+        combinedData.push(item);
+      }
+    });
+
     return (
-      <div>
-        Drive
+      <div className="transitSegmentContent">
+        <ul className="segmentFlightHistory">
+        {(combinedData != undefined && combinedData.length > 0) ?
+          combinedData.map((res) =>
+            <div className="segmentTransitElement"
+                 onClick={() => setDriveRoute(res)}>
+              {res == driveRoute ?
+                <p style={{marginTop: 1, marginBottom: 4}}><strong>{res.mainStreetName}</strong></p>
+                :
+                <p style={{marginTop: 1, marginBottom: 4}}>{res.mainStreetName}</p>
+              }
+              <p style={{marginTop: 1, marginBottom: 1}}>Distance: {res.distance}</p>
+              {prevDrives.includes(res) ?
+                <p style={{marginTop: 1, marginBottom: 1}}><i>You've taken this route before</i></p> : <p />}
+              <hr className="driveSegmentSeparator" />
+            </div>)
+          : <p>No driving routes found</p>}
+        </ul>
       </div>
     );
   }
@@ -310,11 +392,63 @@ function SegmentScreen() {
         });
       }
     } else if (icons[1]) { // transit
-
+      if (transitRoute == {}) {
+        alert("Please select a transit route");
+      } else {
+        segDoc.set({
+          busNumber: transitRoute.busNumber,
+          startingStop: transitRoute.startingStop,
+          destinationStop: transitRoute.destinationStop,
+          departureTime: depart,
+          startingLocation: start,
+          destinationLocation: dest,
+          modeOfTransport: "transit",
+          uid: segID,
+          customNotes: "",
+          sequenceNum: tripSegments.length + 1
+        }).then(() => {
+          history.push("/view-trip");
+          window.location.href = "./view-trip";
+        });
+      }
     } else if (icons[2]) { // taxi
-
+      if (taxi == {}) {
+        alert("Please select a taxi option");
+      } else {
+        segDoc.set({
+          taxiCompany: taxi.taxiCompany,
+          taxiCompanyPhoneNumber: taxi.taxiCompanyPhoneNumber,
+          departureTime: depart,
+          startingLocation: start,
+          destinationLocation: dest,
+          modeOfTransport: "taxi",
+          uid: segID,
+          customNotes: "",
+          sequenceNum: tripSegments.length + 1
+        }).then(() => {
+          history.push("/view-trip");
+          window.location.href = "./view-trip";
+        });
+      }
     } else if (icons[3]) { // drive
-
+      if (driveRoute == {}) {
+        alert("Please select a driving route");
+      } else {
+        segDoc.set({
+          mainStreetName: driveRoute.mainStreetName,
+          distance: driveRoute.distance,
+          departureTime: depart,
+          startingLocation: start,
+          destinationLocation: dest,
+          modeOfTransport: "drive",
+          uid: segID,
+          customNotes: "",
+          sequenceNum: tripSegments.length + 1
+        }).then(() => {
+          history.push("/view-trip");
+          window.location.href = "./view-trip";
+        });
+      }
     } else if (icons[4]) { // ferry
       if (ferryTime == "Sailing Time") {
         alert("Please fill in a sailing time");
@@ -408,4 +542,3 @@ function SegmentScreen() {
 }
 
 export default SegmentScreen;
- 
