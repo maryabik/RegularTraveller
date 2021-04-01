@@ -13,7 +13,7 @@
   justify-content: flex-start;
   display: flex;
   align-self: flex-start;
-  width: inherit;
+  width: 100%;
   margin-left: -5px
 }
 
@@ -128,7 +128,24 @@
 .transitSegmentContent {
   flex-direction: column;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: flex-start;
   width: 100%;
+  margin-left: -72px
+}
+
+.segmentTransitElement {
+  flex-direction: column;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.transitSegmentSeparator {
+  border: none;
+  height: 1px;
+  background-color: #E5E5E5;
+  width: 100%;
+  margin-top: -10px
 }
