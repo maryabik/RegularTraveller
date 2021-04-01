@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 import firebase from 'firebase/app'
 import "firebase/auth";
 import "firebase/firestore";
@@ -11,6 +11,14 @@ import { Icon, InlineIcon } from '@iconify/react';
 import copy24Filled from '@iconify/icons-fluent/copy-24-filled';
 import outlineTrain from '@iconify/icons-ic/outline-train';
 import TorontoPic from '../../assets/TorontoPic.png';
+
+import calendarIcon from '@iconify/icons-bi/calendar';
+import moment from 'moment';
+import Popup from "reactjs-popup"
+
+
+
+
 
 function Home(){
   const [trips, setTrips] = useState([]);
@@ -38,6 +46,39 @@ function Home(){
     }, []);
   */
 
+    const location = useLocation();
+    let history = useHistory();
+  
+    const [name, setName] = useState("");
+    const [start, setStart] = useState("");
+    const [dest, setDest] = useState("");
+    const [date, setDate] = useState("");
+
+    function changeStart(event) {
+      var target = event.target.value;
+      console.log(target);
+      setStart(target);
+    }
+
+    function changeDest(event) {
+      var target = event.target.value;
+      console.log(target);
+      setDest(target);
+    }
+  
+    function changeName(event) {
+      var target = event.target.value;
+      console.log(target);
+      setName(target);
+    }
+
+    function changeDate(event) {
+      var target = event.target.value;
+      console.log(target);
+      setDate(target);
+    }
+
+   
   return (
     <div className="homeContent">
       <h1 className="homeTitle">My Trips</h1>
@@ -54,10 +95,67 @@ function Home(){
           </div>
         </div>
       </div>
-      <button className="buttonPlus"  onClick={() => window.location.href = "/addnew"}>+</button>
+
+<div className= "modalWrapper">
+      <Popup trigger={<button className="buttonPlus">+</button>} modal>
+        {close => (
+            <div className="modal">
+              <div id="cancel"onClick={close}>
+                <p style={{marginLeft: "10px", color: "#3A72B4"}}>Cancel</p>
+              </div>
+              <div style ={{margin:'auto', textAlign: 'center'}} id="header">
+                <h1>New Trip</h1>
+              </div>
+              <div id="addcontainer">
+                <p><strong>Trip Name*</strong></p>
+                  <form onSubmit={e => { e.preventDefault(); }}>
+                    <input type="text"
+                          placeholder="Enter trip name"
+                          id="startLocation"
+                          className="AddTripForm"
+                          onChange={changeName}
+                    />
+                  </form>
+                <p><strong>Start Location*</strong></p>
+                <form onSubmit={e => { e.preventDefault(); }}>
+                    <input type="text"
+                          placeholder="Enter start location"
+                          id="startLocation"
+                          className="AddTripForm"
+                          onChange={changeStart}
+                    />
+                  </form>
+                <p><strong>Destiantion Location*</strong></p>
+                <form onSubmit={e => { e.preventDefault(); }}>
+                    <input type="text"
+                          placeholder="Enter destination location"
+                          id="startLocation"
+                          className="AddTripForm"
+                          onChange={changeDest}
+                    />
+                  </form> 
+                <p><strong>Departure Date*</strong></p>
+                <form onSubmit={e => { e.preventDefault(); }}>
+                    <input type="Date"     
+                          id="startLocation"
+                          className="AddTripForm"
+                          onChange={changeDate}
+                    />
+                  </form>
+              </div>
+              <div>
+                  <button className="saveButtonAdd" onClick={()=>{window.location.href = "/view-trip"}}>Save</button>
+                </div>  
+          </div>           
+           )}
+        </Popup>
+      </div>
       <div className="signoutBtn" onClick={() => logout()}>LOG OUT</div>
+
+      
     </div>
   );
 }
+
 
 export default Home;
