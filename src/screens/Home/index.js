@@ -190,22 +190,44 @@ function Home() {
     var result = tripMap.filter(elem => {
       return elem.tripID === trip.uid;
     });
-    var segments = result[0];
+    var segments = result[0].segmentData;
+    var numSegments = segments.length;
     var promiseList = [];
 
-    for (let i = 0; i < segments.length; i++) {
-      promiseList.push(copySegment(segments[i], newTripID, uuidv4()));
-    }
-
+    console.log("In duplicate segments");
+    console.log(segments);
     return new Promise((resolve, reject) => {
-      Promise.all(promiseList)
-             .then((res) => {
-                 resolve(res);
-             })
-             .catch((e) => {
-                 // Handle errors here
-                 reject(e);
-             });
+      if (numSegments == 3) {
+        copySegment(segments[0], newTripID, uuidv4())
+        .then(() => copySegment(segments[1], newTripID, uuidv4()))
+        .then(() => copySegment(segments[2], newTripID, uuidv4()))
+        .then((res) => resolve(res))
+        .catch((err) => reject(err));
+      } else if (numSegments == 4) {
+        copySegment(segments[0], newTripID, uuidv4())
+        .then(() => copySegment(segments[1], newTripID, uuidv4()))
+        .then(() => copySegment(segments[2], newTripID, uuidv4()))
+        .then(() => copySegment(segments[3], newTripID, uuidv4()))
+        .then((res) => resolve(res))
+        .catch((err) => reject(err));
+      } else if (numSegments == 5) {
+        copySegment(segments[0], newTripID, uuidv4())
+        .then(() => copySegment(segments[1], newTripID, uuidv4()))
+        .then(() => copySegment(segments[2], newTripID, uuidv4()))
+        .then(() => copySegment(segments[3], newTripID, uuidv4()))
+        .then(() => copySegment(segments[4], newTripID, uuidv4()))
+        .then((res) => resolve(res))
+        .catch((err) => reject(err));
+      } else if (numSegments == 6) {
+        copySegment(segments[0], newTripID, uuidv4())
+        .then(() => copySegment(segments[1], newTripID, uuidv4()))
+        .then(() => copySegment(segments[2], newTripID, uuidv4()))
+        .then(() => copySegment(segments[3], newTripID, uuidv4()))
+        .then(() => copySegment(segments[4], newTripID, uuidv4()))
+        .then(() => copySegment(segments[5], newTripID, uuidv4()))
+        .then((res) => resolve(res))
+        .catch((err) => reject(err));
+      }
     }).then((response) => {
       return true;
     }, (err) => {
@@ -215,6 +237,7 @@ function Home() {
   }
 
   function copySegment(segmentData, newTripID, segmentID) {
+    segmentData.uid = segmentID;
     return new Promise((resolve, reject) => {
       db.collection('users')
         .doc(userID)
