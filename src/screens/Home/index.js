@@ -405,7 +405,7 @@ function Home() {
                 </div>
                 <div>
                     <button className="saveButtonAdd" onClick={()=>{
-                      insertTrip().then(() => history.push("/trip-details", { currTrip: createdTrip }));
+                      insertTrip().then(() => history.push("/home"));
                       }}>Save</button>
                   </div>
             </div>

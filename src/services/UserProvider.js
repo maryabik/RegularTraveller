@@ -142,7 +142,7 @@ export const UserProvider = ({ children }) => {
       } else if (type == "ferry") {
         segRef.set({
           modeOfTransport: type,
-          sailingTim: details,
+          sailingTime: details,
           startingLocation: start,
           destinationLocation: end,
           departureTime: depart,
