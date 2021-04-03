@@ -30,15 +30,33 @@ function SegmentScreen() {
   const [start, setStart] = useState(currSegment != undefined ? currSegment.startingLocation : "");
   const [dest, setDest] = useState(currSegment != undefined ? currSegment.destinationLocation : "");
   const [depart, setDepart] = useState(currSegment != undefined ? currSegment.departureTime : "");
-  const [icons, setIcons] = useState([false, false, false, false, false]);
+  const [icons, setIcons] = useState(() => {
+    if (currSegment == undefined) return [false, false, false, false, false];
+    else if (currSegment.modeOfTransport == "flight") return [true, false, false, false, false];
+    else if (currSegment.modeOfTransport == "transit") return [false, true, false, false, false];
+    else if (currSegment.modeOfTransport == "taxi") return [false, false, true, false, false];
+    else if (currSegment.modeOfTransport == "drive") return [false, false, false, true, false];
+    else if (currSegment.modeOfTransport == "ferry") return [false, false, false, false, true];
+  });
+
   const [dataSegments, setDataSegments] = useState([]); // routeData
   const [userSegments, setUserSegments] = useState([]); // all the user's segments
   const [tripSegments, setTripSegments] = useState([]); // all the segments in this trip
   const [thisSegment, setThisSegment] = useState({}); // this current segment
 
   // flight states
-  const [airline, setAirline] = useState("Airline");
-  const [flightNum, setFlightNum] = useState("Flight Number");
+  const [airline, setAirline] = useState(() => {
+    if (currSegment.airline != undefined)
+      return currSegment.airline;
+    else
+      return "Airline";
+  });
+  const [flightNum, setFlightNum] = useState(() => {
+    if (currSegment.flightNum != undefined)
+      return currSegment.flightNum;
+    else
+      return "Flight Number";
+  });
 
   // transit states
   const [transitRoute, setTransitRoute] = useState({});
@@ -314,7 +332,7 @@ function SegmentScreen() {
               }
               <p style={{marginTop: 1, marginBottom: 1}}>Distance: {res.distance}</p>
               {prevDrives.includes(res) ?
-                <p style={{marginTop: 1, marginBottom: 1}}><i>You've taken this route before</i></p> : <p />}
+                <p style={{marginTop: 1, marginBottom: 1, fontSize: 13}}><i>You've taken this route before</i></p> : <p />}
               <hr className="driveSegmentSeparator" />
             </div>)
           : <p>No driving routes found</p>}
@@ -360,13 +378,32 @@ function SegmentScreen() {
     );
   }
 
+  function uuidv4() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  }
+
   function saveSegment() {
-    const segID = Math.random().toString();
+    const segID = (currSegment != undefined) ? currSegment.uid : uuidv4();
     const segDoc = db.collection('users').doc(userID).collection('trips')
                      .doc(currTrip.uid).collection('segments').doc(segID);
 
     if (start == "" || dest == "" || depart == "") {
       alert("Please fill in depature time, start location and destination location.");
+    }
+
+    // setting the sequenceNum of the segment
+    var seqNum = 0;
+    if (currSegment != undefined) {
+      // find max sequenceNum in tripSegments
+      tripSegments.forEach((item) => {
+        if (item.sequenceNum > seqNum)
+          seqNum = item.sequenceNum;
+      });
+    } else {
+      seqNum = tripSegments.length + 1;
     }
 
     if (icons[0]) { // flight
@@ -381,10 +418,9 @@ function SegmentScreen() {
           modeOfTransport: "flight",
           uid: segID,
           customNotes: "",
-          sequenceNum: tripSegments.length + 1
+          sequenceNum: seqNum
         }).then(() => {
-          history.push("/trip-details");
-          window.location.href = "./trip-details";
+          history.push("/trip-details", { currTrip: currTrip });
         });
       }
     } else if (icons[1]) { // transit
@@ -401,10 +437,9 @@ function SegmentScreen() {
           modeOfTransport: "transit",
           uid: segID,
           customNotes: "",
-          sequenceNum: tripSegments.length + 1
+          sequenceNum: seqNum
         }).then(() => {
-          history.push("/trip-details");
-          window.location.href = "./trip-details";
+          history.push("/trip-details", { currTrip: currTrip });
         });
       }
     } else if (icons[2]) { // taxi
@@ -420,10 +455,9 @@ function SegmentScreen() {
           modeOfTransport: "taxi",
           uid: segID,
           customNotes: "",
-          sequenceNum: tripSegments.length + 1
+          sequenceNum: seqNum
         }).then(() => {
-          history.push("/trip-details");
-          window.location.href = "./trip-details";
+          history.push("/trip-details", { currTrip: currTrip });
         });
       }
     } else if (icons[3]) { // drive
@@ -439,10 +473,9 @@ function SegmentScreen() {
           modeOfTransport: "drive",
           uid: segID,
           customNotes: "",
-          sequenceNum: tripSegments.length + 1
+          sequenceNum: seqNum
         }).then(() => {
-          history.push("/trip-details");
-          window.location.href = "./trip-details";
+          history.push("/trip-details", { currTrip: currTrip });
         });
       }
     } else if (icons[4]) { // ferry
@@ -457,10 +490,9 @@ function SegmentScreen() {
           modeOfTransport: "ferry",
           uid: segID,
           customNotes: "",
-          sequenceNum: tripSegments.length + 1
+          sequenceNum: seqNum
         }).then(() => {
-          history.push("/trip-details");
-          window.location.href = "./trip-details";
+          history.push("/trip-details", { currTrip: currTrip });
         });
       }
     } else {

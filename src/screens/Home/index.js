@@ -32,16 +32,19 @@ function Home() {
   const [prevTrips, setTrips] = useState([]);
   const [tripIDs, setTripIDs] = useState([]); // stores tripIDs
   const [tripMap, setTripMap] = useState([]);
+  const [createdTrip, setCreatedTrip] = useState({});
   const [name, setName] = useState("");
   const [start, setStart] = useState("");
   const [dest, setDest] = useState("");
   const [date, setDate] = useState("");
 
+  const monthMap = {"01": "January", "02": "February", "03": "March", "04": "April",
+                    "05": "May", "06": "June", "07": "July", "08": "August",
+                    "09": "September", "10": "October", "11": "November", "12": "December"};
+
   useEffect(() => {
     loadData();
   }, []);
-
-
 
   function loadData() {
     db.collection('users')
@@ -98,6 +101,14 @@ function Home() {
     setDate(target);
   }
 
+  function reformatDate(dateString) {
+    var dateParts = dateString.split('-');
+    console.log("Date parts");
+    console.log(dateParts);
+    var month = monthMap[dateParts[1]];
+    return month + " " + dateParts[2] + ", " + dateParts[0];
+  }
+
   function displayPastTrips() {
     return (
       <ul className="tripHistoryList">
@@ -108,7 +119,7 @@ function Home() {
               history.push("/trip-details", { currTrip: res });
             }}>
             <p className="tripItemTitle"><strong>{res.tripName}</strong></p>
-            <p className="tripItemTitle">{res.departureDate}</p>
+            <p className="tripItemTitle">{reformatDate(res.departureDate)}</p>
             <div className="tripItemIconRow">
               {displayIconRow(res)}
               <Popup trigger={<Icon icon={copy24Filled} style={{color: '#686868', fontSize: '35px'}}/>} modal>
@@ -138,15 +149,13 @@ function Home() {
                               onChange={changeDate}
                         />
                       </form>
-                      {setStart(res.start),
-                      setDest(res.dest)}
                     </div>
                     <div>
                     <button className="saveButtonAdd" onClick={()=>{
                       const newTripID = uuidv4();
                       duplicateTrip(res, newTripID)
                       .then(() => duplicateSegments(res, newTripID))
-                      .then(() => window.location.href = "/home");
+                      .then(() => history.push("/home"));
                       }}>Save</button>
                     </div>
                   </div>
@@ -316,19 +325,23 @@ function Home() {
     });
   }
 
-  function insertTrip(depart, tripName, start, end) {
+  function insertTrip() {
     var tripID = uuidv4();
-    const tripRef = db.collection("users").doc(userID).collection("trips").doc(tripID);
+    var tripContent = {
+      departureDate: date,
+      arrivalDate: "",
+      tripName: name,
+      startLocation: start,
+      endLocation: dest,
+      uid: tripID
+    };
+    console.log(tripContent);
+    setCreatedTrip(tripContent);
 
     return new Promise((resolve, reject) => {
-      tripRef.set({
-        departureDate: depart,
-        arrivalDate: "",
-        tripName: tripName,
-        startLocation: start,
-        endLocation: end,
-        uid: tripID
-      }).then((response) => resolve(response))
+      var tripRef = db.collection('users').doc(userID).collection('trips').doc(tripID);
+      tripRef.set(tripContent)
+        .then((response) => resolve(response))
         .catch((err) => reject(err));
       }).then((response) => {
         return true;
@@ -392,8 +405,7 @@ function Home() {
                 </div>
                 <div>
                     <button className="saveButtonAdd" onClick={()=>{
-                      insertTrip(date, name, start, dest)
-                      .then(() => window.location.href = "/trip-details");
+                      insertTrip().then(() => history.push("/trip-details", { currTrip: createdTrip }));
                       }}>Save</button>
                   </div>
             </div>

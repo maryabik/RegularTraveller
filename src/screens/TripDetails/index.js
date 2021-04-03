@@ -21,8 +21,6 @@ const iconMapping = new Map ([
     ["Bus", <IoIosBus className = "segment-icon"/>]
 ])
 
-const goToViewTrip = () => window.location.href = "/view-trip";
-
 function TripDetail() {
   const { logout } = useContext(UserContext);
   const location = useLocation();
@@ -32,11 +30,12 @@ function TripDetail() {
 
   // the current trip we are on
   var currTrip = location.state.currTrip;
+  console.log(currTrip);
 
   // list of the current trip's segments
   const [segments, setSegments] = useState([]);
 
-  const [departDate, setDepartDate] = useState("");
+  const [departDate, setDepartDate] = useState(currTrip.departureDate);
   const [start, setStart] = useState(currTrip.startLocation);
   const [dest, setDest] = useState(currTrip.endLocation);
 
@@ -72,6 +71,8 @@ function TripDetail() {
           startLocation: this.state.trip_start,
           endLocation: this.state.trip_destination
       });
+
+      history.push("/home");
   }
 
   function changeDate(event) {
@@ -93,6 +94,7 @@ function TripDetail() {
         <div className="wrapper">
           <div className="tripScreenTitleContainer">
             <ArrowBack onClick={() => {
+              //saveSegment()
               history.push("/home"); }}
             />
           <h1 className="tripScreenTitle">{currTrip.tripName}</h1>
@@ -101,7 +103,7 @@ function TripDetail() {
             <p style={{marginRight: 30}}>Departure:</p>
             <form onSubmit={e => { e.preventDefault(); }}>
               <input type="Date"
-                     placeholder="yyyy-mm-dd"
+                     placeholder={departDate}
                      id="departureDate"
                      className="tripInputForm"
                      onChange={changeDate}
@@ -144,7 +146,8 @@ function TripDetail() {
                         </Segment>);
             })}
           </ul>
-          <div className="addSegmentBtn"><p>+</p></div>
+          <div className="addSegmentBtn"
+               onClick={() => history.push("/segment", { trip: currTrip })}><p>+</p></div>
         </div>
     );
 }

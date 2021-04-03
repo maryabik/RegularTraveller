@@ -15,7 +15,7 @@ const Segment = ({ segment, onClick}) => {
 
     var description =
     segment.modeOfTransport == "drive" ? segment.mainStreetName + " (" + segment.distance + ")":
-    segment.modeOfTransport == "ferry" ? segment.sailingTime  + " Sailing":
+    segment.modeOfTransport == "ferry" ? segment.sailingTime + " Sailing":
     segment.modeOfTransport == "taxi" ? segment.taxiCompany + " (" + segment.taxiCompanyPhoneNumber + ")":
     segment.modeOfTransport == "transit" ? segment.busNumber + " (" + segment.startingStop + " - " + segment.destinationStop + ")":
       segment.airline + " " + segment.flightNum + " (" + segment.startingLocation + " - "

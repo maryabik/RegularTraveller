@@ -3,6 +3,7 @@ import firebase from 'firebase';
 import "firebase/auth";
 import "firebase/firestore";
 import { signInWithGoogle } from './firebase.js';
+import { useHistory, useLocation } from 'react-router-dom';
 
 const auth = firebase.auth();
 const db = firebase.firestore();
@@ -10,6 +11,7 @@ const googleProvider = new firebase.auth.GoogleAuthProvider();
 
 export const UserContext = createContext({});
 export const UserProvider = ({ children }) => {
+  let history = useHistory();
   const [user, setUser] = useState(null);
   const [tripIDs, setTripIDs] = useState([]); // stores tripIDs
   const [tripMap, setTripMap] = useState({}); // map for tripID -> list of segmentIDs
@@ -140,7 +142,7 @@ export const UserProvider = ({ children }) => {
       } else if (type == "ferry") {
         segRef.set({
           modeOfTransport: type,
-          sailing: details,
+          sailingTim: details,
           startingLocation: start,
           destinationLocation: end,
           departureTime: depart,
@@ -165,24 +167,6 @@ export const UserProvider = ({ children }) => {
           sequenceNum: order
         }).then((response) => resolve(response))
           .catch((err) => reject(err));
-
-      } else if (type == "flight-layover1") {
-        segRef.set({
-          modeOfTransport: type,
-          airline1: details[0],
-          flightNum1: details[1],
-          airline2: details[0],
-          flightNum2: details[1],
-          startingLocation: start,
-          destinationLocation: end,
-          departureTime: depart,
-          arrivalTime: arrive,
-          notes: "",
-          uid: segmentID,
-          sequenceNum: order
-        }).then((response) => resolve(response))
-          .catch((err) => reject(err));
-
       } else { // taxi
         segRef.set({
           modeOfTransport: type,
@@ -219,20 +203,28 @@ export const UserProvider = ({ children }) => {
           auth.signInWithPopup(googleProvider).then((res) => {
             console.log(res.user)
             const userID = res.user.uid;
-            db.collection("users").doc(userID).set({ userID: userID, email: res.user.email })
-              .then(() => insertTrip(userID, "March 1, 2021", "Trip to Victoria", "Vancouver, BC", "Victoria, BC"))
-              .then(() => insertTrip(userID, "March 5, 2021", "Trip to LA", "Vancouver, BC", "Los Angeles, California"))
-              .then(() => insertTrip(userID, "March 10, 2021", "Trip to Brasilia", "Vancouver, BC", "Brasilia, Brazil"))
-              .then(() => setTrip(userID, tripIDs[0], 0))
-              .then(() => setTrip(userID, tripIDs[1], 1))
-              .then(() => setTrip(userID, tripIDs[2], 2))
-              .then(() => window.location.href = "./home");
+            const userRef = db.collection("users").doc(userID);
+            userRef.get()
+              .then((docSnapshot) => {
+                if (docSnapshot.exists) {
+                  window.location.href = "/home"
+                } else {
+                  userRef.set({ userID: userID, email: res.user.email })
+                  .then(() => insertTrip(userID, "2021-03-10", "Trip to Victoria", "Vancouver, BC", "Victoria, BC"))
+                  .then(() => insertTrip(userID, "2021-03-20", "Trip to LA", "Vancouver, BC", "Los Angeles, California"))
+                  .then(() => insertTrip(userID, "2021-03-23", "Trip to Brasilia", "Vancouver, BC", "Brasilia, Brazil"))
+                  .then(() => setTrip(userID, tripIDs[0], 0))
+                  .then(() => setTrip(userID, tripIDs[1], 1))
+                  .then(() => setTrip(userID, tripIDs[2], 2))
+                  .then(() => window.location.href = "/home");
+                }
+              });
           }).catch((error) => {
             console.log(error.message)
           })
         },
         logout: () => {
-          auth.signOut().then(() => window.location.href = "./landing")
+          auth.signOut().then(() => window.location.href = "/")
                         .catch(() => console.err("Failed to sign out"));
         }
     }}>
