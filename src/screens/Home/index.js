@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { Link, useHistory, useLocation } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import firebase from 'firebase/app'
 import "firebase/auth";
 import "firebase/firestore";
@@ -40,6 +40,8 @@ function Home() {
   useEffect(() => {
     loadData();
   }, []);
+
+
 
   function loadData() {
     db.collection('users')
@@ -102,7 +104,9 @@ function Home() {
       {(prevTrips != undefined && prevTrips.length > 0) ?
         prevTrips.map((res) =>
         <div className="tripItem" >
-          <div className="tripItemContent" onClick={() => {window.location.href = "/view-trip"}}>
+          <div className="tripItemContent" onClick={() => {
+              history.push("/trip-details", { currTrip: res });
+            }}>
             <p className="tripItemTitle"><strong>{res.tripName}</strong></p>
             <p className="tripItemTitle">{res.departureDate}</p>
             <div className="tripItemIconRow">
@@ -165,11 +169,16 @@ function Home() {
     });
 
     var newTrip = trip;
+    if (name == "") {
+      alert("Please enter a trip name");
+      return;
+    } else if (date == "") {
+      alert("Please enter a trip date");
+      return;
+    }
     newTrip.tripName = name;
     newTrip.departureDate = date;
 
-    // the trip's segments in sorted order
-    var segments = result[0];
     return new Promise((resolve, reject) => {
       db.collection('users')
         .doc(userID)
@@ -192,12 +201,22 @@ function Home() {
     });
     var segments = result[0].segmentData;
     var numSegments = segments.length;
-    var promiseList = [];
 
     console.log("In duplicate segments");
     console.log(segments);
     return new Promise((resolve, reject) => {
-      if (numSegments == 3) {
+      if (numSegments == 0) {
+        resolve();
+      } else if (numSegments == 1) {
+        copySegment(segments[0], newTripID, uuidv4())
+        .then((res) => resolve(res))
+        .catch((err) => reject(err));
+      } else if (numSegments == 2) {
+        copySegment(segments[0], newTripID, uuidv4())
+        .then(() => copySegment(segments[1], newTripID, uuidv4()))
+        .then((res) => resolve(res))
+        .catch((err) => reject(err));
+      } else if (numSegments == 3) {
         copySegment(segments[0], newTripID, uuidv4())
         .then(() => copySegment(segments[1], newTripID, uuidv4()))
         .then(() => copySegment(segments[2], newTripID, uuidv4()))
@@ -297,15 +316,11 @@ function Home() {
     });
   }
 
-  function insertTrip(userID, depart, tripName, start, end) {
-    return new Promise((resolve, reject) => {
-      var tripID = uuidv4();
-      var copy = tripIDs;
-      copy.push(tripID);
-      setTripIDs(copy);
-      console.log(tripIDs);
+  function insertTrip(depart, tripName, start, end) {
+    var tripID = uuidv4();
+    const tripRef = db.collection("users").doc(userID).collection("trips").doc(tripID);
 
-      const tripRef = db.collection("users").doc(userID).collection("trips").doc(tripID);
+    return new Promise((resolve, reject) => {
       tripRef.set({
         departureDate: depart,
         arrivalDate: "",
@@ -377,8 +392,8 @@ function Home() {
                 </div>
                 <div>
                     <button className="saveButtonAdd" onClick={()=>{
-                      insertTrip(userID, date, name, start, dest)
-                      .then(() => window.location.href = "/view-trip");
+                      insertTrip(date, name, start, dest)
+                      .then(() => window.location.href = "/trip-details");
                       }}>Save</button>
                   </div>
             </div>

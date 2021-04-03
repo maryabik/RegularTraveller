@@ -12,7 +12,7 @@
     "@testing-library/user-event": "^12.1.10",
     "firebase": "^8.3.1",
     "firebase-admin": "^9.6.0",
-    "history": "^5.0.0",
+    "history": "^4.10.1",
     "material-ui-icons": "^1.0.0-beta.36",
     "moment": "^2.29.1",
     "react": "^17.0.1",

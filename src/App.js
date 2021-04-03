@@ -4,10 +4,9 @@ import { Router } from "react-router-dom";
 import Routes from './routes';
 import { createBrowserHistory } from "history";
 import { UserProvider } from './services/UserProvider.js';
+import history from './history';
 
-let history = createBrowserHistory();
-
-function App() {
+export function App() {
 
   return (
     <UserProvider>

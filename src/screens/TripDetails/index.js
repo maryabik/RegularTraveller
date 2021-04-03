@@ -1,15 +1,18 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState, useContext } from "react";
+import { useHistory, useLocation } from 'react-router-dom';
+import { UserContext } from '../../services/UserProvider';
 import Fab from "@material-ui/core/Fab";
 import AddIcon from "@material-ui/icons/Add";
 import "./index.css";
 import {IoIosSubway, IoIosCar, IoIosBus, IoIosAirplane, IoMdBoat} from "react-icons/io";
 import { Icon, InlineIcon } from "@iconify/react";
-import arrowBackFill from "@iconify/icons-eva/arrow-back-fill";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "reactjs-popup/dist/index.css";
 import firebase from "firebase/app"
 import Segment from "./Segment";
+
+import { ReactComponent as ArrowBack } from '../../assets/arrowBack.svg';
 
 const iconMapping = new Map ([
     ["Drive", <IoIosCar className = "segment-icon"/>],
@@ -20,116 +23,130 @@ const iconMapping = new Map ([
 
 const goToViewTrip = () => window.location.href = "/view-trip";
 
+function TripDetail() {
+  const { logout } = useContext(UserContext);
+  const location = useLocation();
+  const history = useHistory();
+  const userID = firebase.auth().currentUser.uid;
+  const db = firebase.firestore();
 
+  // the current trip we are on
+  var currTrip = location.state.currTrip;
 
-class TripDetail extends React.Component {
-// javascript code Here
-    
-    constructor(props) {
-        super(props);
-        this.state = {
-            trip_name: "",
-            departure_date: new Date(),
-            trip_start: "",
-            trip_destination: "",
-        };
+  // list of the current trip's segments
+  const [segments, setSegments] = useState([]);
 
-        this.user = firebase.auth().currentUser.uid;
+  const [departDate, setDepartDate] = useState("");
+  const [start, setStart] = useState(currTrip.startLocation);
+  const [dest, setDest] = useState(currTrip.endLocation);
 
-        this.segDesctrptions = [];
-        this.segTime = [];
-        this.segTransport = [];
-        this.segUID = [];
+  useEffect(() => {
+    fetchTripInfo();
+  }, []);
 
-        this.db = firebase.firestore();
-        this.tripUID = "071a26df-34fd-4371-a708-76d51dde6555";
-
-        this.fetchTripInfo();
-    }
-
-    async fetchTripInfo () {
-        const segCollection = await this.db
-            .collection("users")
-            .doc(this.user)
-            .collection("trips")
-            .doc(this.tripUID)
-            .collection("segments")
-            .get();
-        
-        segCollection.forEach((doc) => {
-            this.segDesctrptions.push(doc.data().startLocation + " - " + doc.data().endLocation);
-            this.segTime.push(doc.data().departureTime + "-" + doc.data().arrivalTime);
-            this.segTransport.push(doc.data().type);
-            this.segUID.push(doc.id)
+  async function fetchTripInfo() {
+      await db.collection("users")
+        .doc(userID)
+        .collection("trips")
+        .doc(currTrip.uid)
+        .collection("segments")
+        .get()
+        .then((collection) => {
+          collection.forEach((doc) => {
+            setSegments((prev) => {
+              return [doc.data(), ...prev];
+            });
+          });
         });
+  }
 
-        const tripRef = this.db
-            .collection("users")
-            .doc(this.user)
-            .collection("trips")
-            .doc(this.tripUID);
+  function saveTripInfo() {
+      const tripRef = db
+          .collection("users")
+          .doc(this.user)
+          .collection("trips")
+          .doc(this.tripUID);
 
-        const tripDoc = await tripRef.get();
+      tripRef.set({
+          // depatureDate: this.state.departure_date,
+          startLocation: this.state.trip_start,
+          endLocation: this.state.trip_destination
+      });
+  }
 
-        this.setState({trip_name: tripDoc.data().tripName});
-        this.setState({trip_start: tripDoc.data().startLocation});
-        this.setState({trip_destination: tripDoc.data().endLocation});
-        // this.setState({departure_date: tripDoc.data().departureDate});   
-    }
+  function changeDate(event) {
+    var target = event.target.value;
+    setDepartDate(target);
+  }
 
-    saveTripInfo() {
-        const tripRef = this.db
-            .collection("users")
-            .doc(this.user)
-            .collection("trips")
-            .doc(this.tripUID);
+  function changeStart(event) {
+    var target = event.target.value;
+    setStart(target);
+  }
 
-        tripRef.set({
-            // depatureDate: this.state.departure_date,
-            startLocation: this.state.trip_start,
-            endLocation: this.state.trip_destination
-        });
-    }
-        
+  function changeDest(event) {
+    var target = event.target.value;
+    setDest(target);
+  }
 
-    render () {
-        return (
-            <div className="wrapper">
-                
-                <header className = "header">
-                    <Icon icon={arrowBackFill} style={{fontSize: "40px"}} onClick = {() => {window.location.href = "/home";}}/>
-                    <h1>{this.state.trip_name}</h1>
-                </header>
-
-                <div className = "line">
-                    <b>Departure:</b>
-                    <DatePicker selected = {this.state.data}/>
-                </div>
-
-                <p/>
-
-                <div className = "line">
-                    <b>From:</b>
-                    <input value = {this.state.trip_start}  onChange = {async (event) =>{this.setState({trip_start: event.target.value}); }}/>
-                </div>
-                
-                <div className = "line">
-                    <b>to:</b>
-                    <input value = {this.state.trip_destination}  onChange = {async (event) =>{this.setState({trip_destination: event.target.value});}}/>
-                </div>
-
-                <p style = {{marginTop: "40px"}}/>
-
-                {this.segDesctrptions.map((item, index) => {
-                    return (<Segment discrption = {item} transport = {this.segTransport[index]} time = {this.segTime[index]} icon = {iconMapping.get("Drive")} onClick = {() => {window.location.href = "/segment"}}></Segment>);
-                })}
-
-                <Fab color="primary" aria-label="add" >
-                    <AddIcon/>
-                </Fab>
-            </div>
-        );
-    }
+    return (
+        <div className="wrapper">
+          <div className="tripScreenTitleContainer">
+            <ArrowBack onClick={() => {
+              history.push("/home"); }}
+            />
+          <h1 className="tripScreenTitle">{currTrip.tripName}</h1>
+          </div>
+          <div className="tripInputRow">
+            <p style={{marginRight: 30}}>Departure:</p>
+            <form onSubmit={e => { e.preventDefault(); }}>
+              <input type="Date"
+                     placeholder="yyyy-mm-dd"
+                     id="departureDate"
+                     className="tripInputForm"
+                     onChange={changeDate}
+              />
+            </form>
+          </div>
+          <div className="tripInputRow">
+            <p style={{marginRight: 65}}>From:</p>
+            <form onSubmit={e => { e.preventDefault(); }}>
+              <input type="text"
+                     placeholder={start}
+                     id="departureDate"
+                     className="tripInputForm"
+                     onChange={changeStart}
+              />
+            </form>
+          </div>
+          <div className="tripInputRow">
+            <p style={{marginRight: 84}}>To:</p>
+            <form onSubmit={e => { e.preventDefault(); }}>
+              <input type="text"
+                     placeholder={dest}
+                     id="departureDate"
+                     className="tripInputForm"
+                     onChange={changeDest}
+              />
+            </form>
+          </div>
+          <ul className="tripSegmentList">
+            {[].concat(segments)
+               .sort((a, b) => a.sequenceNum > b.sequenceNum ? 1 : -1)
+               .map((item) => {
+                return (<Segment segment={item}
+                                 onClick={() => {
+                                   history.push("/segment", {
+                                     trip: currTrip,
+                                     segment: item
+                                   });
+                                 }}>
+                        </Segment>);
+            })}
+          </ul>
+          <div className="addSegmentBtn"><p>+</p></div>
+        </div>
+    );
 }
 
 export default TripDetail;

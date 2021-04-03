@@ -1,11 +1,44 @@
 .wrapper{
-    padding: 24px;
+  flex-direction: column;
+  display: flex;
+  align-items: center;
+  height: 100vh;
+  padding-left: 5vw;
+  padding-right: 5vw
 }
 
-.header {
-    display: flex;
-    justify-content:left;
-    align-items: center;
+.tripScreenTitleContainer {
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  display: flex;
+  align-self: flex-start;
+  width: 100%;
+  margin-left: -5px;
+  margin-top: -15px;
+}
+
+.tripInputRow {
+  flex-direction: row;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  margin-top: -10px
+}
+
+.tripScreenTitle {
+  font-size: 30px;
+  text-align: center;
+  margin-left: 30px
+}
+
+.tripInputForm {
+  height: 25px;
+  width: 175px;
+  border-radius: 5px;
+  border-width: 1px;
+  border-color: #E5E5E5;
 }
 
 .line {
@@ -14,6 +47,7 @@
     align-items: center;
     margin-top: 8px;
     margin-bottom: 8px;
+    width: 100%
 }
 
 .segment {
@@ -26,6 +60,41 @@
     width: 25px;
     height: 25px;
     margin: 10px;
+}
+
+.tripSegmentList {
+  flex-direction: column;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  margin-left: -10px;
+  height: 50vh;
+  overflow-y: scroll;
+  width: 100%
+}
+
+.addSegmentBtn {
+  flex-direction: row;
+  display: flex;
+  align-self: flex-end;
+  justify-content: center;
+  align-items: center;
+  background-color: #3A72B4; /* Green */
+  border: none;
+  border-radius: 30px;
+  width: 60px;
+  height: 60px;
+  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
+  margin-right: 40px;
+}
+
+.addSegmentBtn p {
+  color: white;
+  text-align: center;
+  font-size: 38px;
+  align-self: center;
+  margin-top: -5px;
+  margin-bottom: 0
 }
 
 .segment-detail {
@@ -41,5 +110,5 @@
 hr.thin {
     height: 1px;
     background-color: #989898;
-    width: auto;
+    width: 100%;
 }

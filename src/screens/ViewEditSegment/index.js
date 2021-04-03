@@ -23,17 +23,13 @@ function SegmentScreen() {
   let history = useHistory();
   const userID = firebase.auth().currentUser.uid;
   const db = firebase.firestore();
-  const tripData = {
-    tripID: "3ee66c5d-9b5b-4afd-b648-c3d653794853",
-    segmentID: "7f91aed8-a154-4d2c-b871-2caf60d3e8b7",
-    startingLocation: "LAX",
-    destinationLocation: "Los Angeles City Hall"
-  }
+  var currTrip = location.state.trip;
+  var currSegment = location.state.segment;
 
   let isMounted = false;
-  const [start, setStart] = useState("");
-  const [dest, setDest] = useState("");
-  const [depart, setDepart] = useState("");
+  const [start, setStart] = useState(currSegment != undefined ? currSegment.startingLocation : "");
+  const [dest, setDest] = useState(currSegment != undefined ? currSegment.destinationLocation : "");
+  const [depart, setDepart] = useState(currSegment != undefined ? currSegment.departureTime : "");
   const [icons, setIcons] = useState([false, false, false, false, false]);
   const [dataSegments, setDataSegments] = useState([]); // routeData
   const [userSegments, setUserSegments] = useState([]); // all the user's segments
@@ -84,7 +80,7 @@ function SegmentScreen() {
             .get()
             .then((qSnapshot) => {
               qSnapshot.forEach(d => { // for each segment of each user trip
-                if (doc.id == tripData.tripID) {
+                if (doc.id == currTrip.uid) {
                   setTripSegments((prev) => {
                     return [d.data(), ...prev]; // add segment to current trip
                   });
@@ -115,7 +111,7 @@ function SegmentScreen() {
     setDepart(target);
   }
 
-  function selectTransport(index, start, dest) {
+  function selectTransport(index) {
     // make icons[index] the active segment
     switch(index) {
       case 0: // flight
@@ -367,7 +363,7 @@ function SegmentScreen() {
   function saveSegment() {
     const segID = Math.random().toString();
     const segDoc = db.collection('users').doc(userID).collection('trips')
-                     .doc(tripData.tripID).collection('segments').doc(segID);
+                     .doc(currTrip.uid).collection('segments').doc(segID);
 
     if (start == "" || dest == "" || depart == "") {
       alert("Please fill in depature time, start location and destination location.");
@@ -387,8 +383,8 @@ function SegmentScreen() {
           customNotes: "",
           sequenceNum: tripSegments.length + 1
         }).then(() => {
-          history.push("/view-trip");
-          window.location.href = "./view-trip";
+          history.push("/trip-details");
+          window.location.href = "./trip-details";
         });
       }
     } else if (icons[1]) { // transit
@@ -407,8 +403,8 @@ function SegmentScreen() {
           customNotes: "",
           sequenceNum: tripSegments.length + 1
         }).then(() => {
-          history.push("/view-trip");
-          window.location.href = "./view-trip";
+          history.push("/trip-details");
+          window.location.href = "./trip-details";
         });
       }
     } else if (icons[2]) { // taxi
@@ -426,8 +422,8 @@ function SegmentScreen() {
           customNotes: "",
           sequenceNum: tripSegments.length + 1
         }).then(() => {
-          history.push("/view-trip");
-          window.location.href = "./view-trip";
+          history.push("/trip-details");
+          window.location.href = "./trip-details";
         });
       }
     } else if (icons[3]) { // drive
@@ -445,8 +441,8 @@ function SegmentScreen() {
           customNotes: "",
           sequenceNum: tripSegments.length + 1
         }).then(() => {
-          history.push("/view-trip");
-          window.location.href = "./view-trip";
+          history.push("/trip-details");
+          window.location.href = "./trip-details";
         });
       }
     } else if (icons[4]) { // ferry
@@ -463,8 +459,8 @@ function SegmentScreen() {
           customNotes: "",
           sequenceNum: tripSegments.length + 1
         }).then(() => {
-          history.push("/view-trip");
-          window.location.href = "./view-trip";
+          history.push("/trip-details");
+          window.location.href = "./trip-details";
         });
       }
     } else {
@@ -476,8 +472,8 @@ function SegmentScreen() {
     <div className="segmentScreenContent">
       <div className="segmentTitleContainer">
         <ArrowBack onClick={() => {
-          history.push("/view-trip");
-          window.location.href = "./view-trip"; }}
+          history.push("/trip-details", { currTrip: currTrip });
+          }}
         />
         <h1 className="segmentScreenTitle">Trip Plan</h1>
       </div>
@@ -486,7 +482,7 @@ function SegmentScreen() {
           <p style={{marginRight: 60}}>From:</p>
           <form onSubmit={e => { e.preventDefault(); }}>
             <input type="text"
-                   placeholder="Start Location"
+                   placeholder={start != "" ? start : "Start Location"}
                    id="startLocation"
                    className="segmentInputForm"
                    onChange={changeStart}
@@ -497,7 +493,7 @@ function SegmentScreen() {
           <p style={{marginRight: 79}}>To:</p>
           <form onSubmit={e => { e.preventDefault(); }}>
             <input type="text"
-                   placeholder="Destination Location"
+                   placeholder={dest != "" ? dest : "Destination Location"}
                    id="destLocation"
                    className="segmentInputForm"
                    onChange={changeDest}
@@ -508,7 +504,7 @@ function SegmentScreen() {
           <p style={{marginRight: 23}}>Departure:</p>
           <form onSubmit={e => { e.preventDefault(); }}>
             <input type="text"
-                   placeholder="Departure Time"
+                   placeholder={depart != "" ? depart : "Departure Time"}
                    id="departTime"
                    className="segmentInputForm"
                    onChange={changeDepart}

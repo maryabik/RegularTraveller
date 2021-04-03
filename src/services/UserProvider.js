@@ -14,6 +14,12 @@ export const UserProvider = ({ children }) => {
   const [tripIDs, setTripIDs] = useState([]); // stores tripIDs
   const [tripMap, setTripMap] = useState({}); // map for tripID -> list of segmentIDs
 
+  // currently selected trip
+  const [currTrip, setCurrTrip] = useState({});
+
+  // current selected segment
+  const [currSegment, setCurrSegment] = useState({});
+
   function uuidv4() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
       var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
@@ -70,10 +76,14 @@ export const UserProvider = ({ children }) => {
       } else { // Van to Brasilia
         setTripSegment(userID, tripID, "taxi", ["Yellow Cab", "604-681-1111"], "UBC",
                       "YVR", "10:00 AM", "10:16 AM", "", 1)
-        .then(() => setTripSegment(userID, tripID, "flight-layover2", ["Air Canada", "AC118", "Air Canada", "AC90", "Air Canada", "AC9832"],
-                      "YVR", "BSB", "2:10 PM", "6:25 PM", "", 2))
+        .then(() => setTripSegment(userID, tripID, "flight", ["Air Canada", "AC118"],
+                      "YVR", "YYZ", "2:10 PM", "9:31 PM", "", 2))
+        .then(() => setTripSegment(userID, tripID, "flight", ["Air Canada", "AC90"],
+                      "YYZ", "GRU", "11:55 PM", "11:50 AM", "", 3))
+        .then(() => setTripSegment(userID, tripID, "flight", ["Air Canada", "AC9832"],
+                      "GRU", "BSB", "4:35 PM", "6:25 PM", "", 4))
         .then(() => setTripSegment(userID, tripID, "taxi", ["Taxi Brasilia", "55 61 98126-5306"], "BSB",
-                      "Pier 21", "7:00 PM", "7:15 PM", "", 3))
+                      "Pier 21", "7:00 PM", "7:15 PM", "", 5))
         .then((response) => resolve(response))
         .catch((err) => reject(err));
       }
@@ -173,25 +183,6 @@ export const UserProvider = ({ children }) => {
         }).then((response) => resolve(response))
           .catch((err) => reject(err));
 
-      } else if (type == "flight-layover2") {
-        segRef.set({
-          modeOfTransport: type,
-          airline1: details[0],
-          flightNum1: details[1],
-          airline2: details[2],
-          flightNum2: details[3],
-          airline3: details[4],
-          flightNum3: details[5],
-          startingLocation: start,
-          destinationLocation: end,
-          departureTime: depart,
-          arrivalTime: arrive,
-          notes: "",
-          uid: segmentID,
-          sequenceNum: order
-        }).then((response) => resolve(response))
-          .catch((err) => reject(err));
-
       } else { // taxi
         segRef.set({
           modeOfTransport: type,
@@ -222,6 +213,8 @@ export const UserProvider = ({ children }) => {
       value={{
         user,
         setUser,
+        currTrip, setCurrTrip,
+        currSegment, setCurrSegment,
         login: () => {
           auth.signInWithPopup(googleProvider).then((res) => {
             console.log(res.user)

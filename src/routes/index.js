@@ -34,8 +34,7 @@ function Routes() {
       <Switch>
         <Route path="/home" exact component={Home}/>
         <Route path="/edit-trip" exact component={Edit_Trip} />
-        <Route path="/template-details" exact component={Template_Details} />
-        <Route path="/TripDetails" exact component={TripDetail} />
+        <Route path="/trip-details" exact component={TripDetail} />
         <Route path="/view-trip" exact component={View_trip} />
         <Route path="/addnew" exact component={Add} />
         <Route path='/duplicate' exact component={Duplicate}/>
@@ -45,7 +44,7 @@ function Routes() {
   } else {
     return(
       <Switch>
-        <Route path="/landing" component={Landing} />
+        <Route exact path="/" component={Landing} />
       </Switch>
     );
   }
