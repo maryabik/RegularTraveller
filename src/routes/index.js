@@ -32,7 +32,7 @@ function Routes() {
   if (user) {
     return(
       <Switch>
-        <Route path="/home" exact component={Home}/>
+        <Route path="/" exact component={Home}/>
         <Route path="/edit-trip" exact component={Edit_Trip} />
         <Route path="/trip-details" exact component={TripDetail} />
         <Route path="/view-trip" exact component={View_trip} />
